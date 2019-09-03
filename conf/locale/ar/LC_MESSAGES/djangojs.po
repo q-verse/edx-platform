@@ -8478,7 +8478,7 @@ msgstr "أشّر الامتحان بعلامة ’استُكمل‘"
 
 #: lms/templates/courseware/proctored-exam-status.underscore
 msgid "timed"
-msgstr ""
+msgstr "موقوت"
 
 #: lms/templates/courseware/proctored-exam-status.underscore
 msgid ""
@@ -8494,7 +8494,7 @@ msgstr "أنهي امتحاني"
 
 #: lms/templates/courseware/proctored-exam-status.underscore
 msgid "Hide Timer"
-msgstr ""
+msgstr "إخفاء الموقت"
 
 #: lms/templates/discovery/course_card.underscore
 msgid "LEARN MORE"
