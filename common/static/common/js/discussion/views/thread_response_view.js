@@ -209,6 +209,7 @@
                 view = this.renderComment(comment);
                 this.hideEditorChrome();
                 this.trigger('comment:add', comment);
+                event.target.disabled = true;
                 return DiscussionUtil.safeAjax({
                     $elem: $(event.target),
                     url: url,
