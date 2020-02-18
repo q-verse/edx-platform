@@ -583,7 +583,7 @@ msgstr "غير معروف "
 #: themes/st-lutherx/lms/static/js/student_account/components/StudentAccountDeletionModal.jsx
 #: themes/st-normanx/lms/static/js/student_account/components/StudentAccountDeletionModal.jsx
 msgid "Are you sure?"
-msgstr "هل أنت واثق؟"
+msgstr ""
 
 #: cms/static/js/views/metadata.js common/static/bundles/commons.js
 #: lms/static/js/views/file_uploader.js
@@ -3017,10 +3017,13 @@ msgid ""
 "these for your records before proceeding with deletion, follow the "
 "instructions for {htmlStart}printing or downloading a certificate{htmlEnd}."
 msgstr ""
+<<<<<<< HEAD
 "قد تفقد أيضًا الوصول إلى الشهادات التي تم التحقق منها والبرنامج الآخر"
 "بيانات الاعتماد مثل شهادات MicroMasters. إذا كنت ترغب في عمل نسخة من"
 "هذه للسجلات الخاصة بك قبل متابعة الحذف ، اتبع"
 "إرشادات {htmlStart} لطباعة أو تنزيل شهادة {htmlEnd}."
+=======
+>>>>>>> Add LMS Internationalisation support for Mongolian Language and LMS Themes
 
 #: common/static/bundles/EdlyStudentAccountDeletionInitializer.js
 #: common/static/bundles/StudentAccountDeletion.js
@@ -3032,8 +3035,11 @@ msgid ""
 "Before proceeding, please {htmlStart}unlink all social media "
 "accounts{htmlEnd}."
 msgstr ""
+<<<<<<< HEAD
 "قبل المتابعة ، يرجى {htmlStart} إلغاء ربط جميع وسائل التواصل الاجتماعي"
 "حسابات {htmlEnd}."
+=======
+>>>>>>> Add LMS Internationalisation support for Mongolian Language and LMS Themes
 
 #: common/static/bundles/EdlyStudentAccountDeletionInitializer.js
 #: common/static/bundles/StudentAccountDeletion.js
@@ -3042,7 +3048,11 @@ msgstr ""
 #: themes/st-lutherx/lms/static/js/student_account/components/StudentAccountDeletion.jsx
 #: themes/st-normanx/lms/static/js/student_account/components/StudentAccountDeletion.jsx
 msgid "Before proceeding, please {htmlStart}activate your account{htmlEnd}."
+<<<<<<< HEAD
 msgstr "قبل المتابعة ، يرجى {htmlStart} تنشيط حسابك {htmlEnd}."
+=======
+msgstr ""
+>>>>>>> Add LMS Internationalisation support for Mongolian Language and LMS Themes
 
 #: common/static/bundles/EdlyStudentAccountDeletionInitializer.js
 #: themes/st-lutherx/lms/static/js/student_account/components/StudentAccountDeletion.jsx
@@ -3053,10 +3063,13 @@ msgid ""
 "{strongStart}you will no longer be able to use the same email on "
 "Edly.{strongEnd}"
 msgstr ""
+<<<<<<< HEAD
 "{strongStart} تحذير: حذف الحساب دائم. {strongEnd} يرجى قراءة"
 "ما سبق بعناية قبل المتابعة. هذا عمل لا رجعة فيه ، و"
 "{strongStart} ، لن تتمكن بعد الآن من استخدام نفس البريد الإلكتروني على"
 "أبداها. {strongEnd}"
+=======
+>>>>>>> Add LMS Internationalisation support for Mongolian Language and LMS Themes
 
 #: common/static/bundles/EdlyStudentAccountDeletionInitializer.js
 #: common/static/bundles/StudentAccountDeletion.js
@@ -3065,7 +3078,7 @@ msgstr ""
 #: themes/st-lutherx/lms/static/js/student_account/components/StudentAccountDeletion.jsx
 #: themes/st-normanx/lms/static/js/student_account/components/StudentAccountDeletion.jsx
 msgid "We’re sorry to see you go!"
-msgstr "نحن آسفون أن نراك تذهب!"
+msgstr ""
 
 #: common/static/bundles/EdlyStudentAccountDeletionInitializer.js
 #: themes/st-lutherx/lms/static/js/student_account/components/StudentAccountDeletion.jsx
@@ -3075,9 +3088,12 @@ msgid ""
 "cannot be undone. We will not be able to recover your account or the data "
 "that is deleted."
 msgstr ""
+<<<<<<< HEAD
 "يرجى ملاحظة: حذف حسابك والبيانات الشخصية دائم و"
 "لا يمكن التراجع. لن نتمكن من استرداد حسابك أو البيانات"
 "هذا محذوف."
+=======
+>>>>>>> Add LMS Internationalisation support for Mongolian Language and LMS Themes
 
 #: common/static/bundles/EdlyStudentAccountDeletionInitializer.js
 #: themes/st-lutherx/lms/static/js/student_account/components/StudentAccountDeletion.jsx
@@ -3086,8 +3102,11 @@ msgid ""
 "Once your account is deleted, you cannot use it to take courses on the Edly "
 "app, edly.io, or any other site hosted by Edly."
 msgstr ""
+<<<<<<< HEAD
 "بمجرد حذف حسابك ، لا يمكنك استخدامه لأخذ دورات في Edly"
 "التطبيق أو edly.io أو أي موقع آخر تستضيفه Edly."
+=======
+>>>>>>> Add LMS Internationalisation support for Mongolian Language and LMS Themes
 
 #: common/static/bundles/EdlyStudentAccountDeletionInitializer.js
 #: common/static/bundles/StudentAccountDeletion.js
@@ -3099,7 +3118,7 @@ msgstr ""
 #: themes/st-normanx/lms/static/js/student_account/components/StudentAccountDeletion.jsx
 #: themes/st-normanx/lms/static/js/student_account/views/edly_account_settings_factory.js
 msgid "Delete My Account"
-msgstr "احذف حسابي"
+msgstr ""
 
 #: common/static/bundles/EdlyStudentAccountDeletionInitializer.js
 #: common/static/bundles/StudentAccountDeletion.js
@@ -3108,7 +3127,7 @@ msgstr "احذف حسابي"
 #: themes/st-lutherx/lms/static/js/student_account/components/StudentAccountDeletionModal.jsx
 #: themes/st-normanx/lms/static/js/student_account/components/StudentAccountDeletionModal.jsx
 msgid "Password is incorrect"
-msgstr "كلمة المرور غير صحيحة"
+msgstr ""
 
 #: common/static/bundles/EdlyStudentAccountDeletionInitializer.js
 #: common/static/bundles/StudentAccountDeletion.js
@@ -3117,7 +3136,7 @@ msgstr "كلمة المرور غير صحيحة"
 #: themes/st-lutherx/lms/static/js/student_account/components/StudentAccountDeletionModal.jsx
 #: themes/st-normanx/lms/static/js/student_account/components/StudentAccountDeletionModal.jsx
 msgid "Unable to delete account"
-msgstr "غير قادر على حذف الحساب"
+msgstr ""
 
 #: common/static/bundles/EdlyStudentAccountDeletionInitializer.js
 #: common/static/bundles/StudentAccountDeletion.js
@@ -3126,7 +3145,7 @@ msgstr "غير قادر على حذف الحساب"
 #: themes/st-lutherx/lms/static/js/student_account/components/StudentAccountDeletionModal.jsx
 #: themes/st-normanx/lms/static/js/student_account/components/StudentAccountDeletionModal.jsx
 msgid "Please re-enter your password."
-msgstr "من فضلك أعد إدخال الرمز السري."
+msgstr ""
 
 #: common/static/bundles/EdlyStudentAccountDeletionInitializer.js
 #: common/static/bundles/StudentAccountDeletion.js
@@ -3138,8 +3157,11 @@ msgid ""
 "Sorry, there was an error trying to process your request. Please try again "
 "later."
 msgstr ""
+<<<<<<< HEAD
 "عذرًا ، حدث خطأ أثناء محاولة معالجة طلبك. يرجى إعادة المحاولة"
 "في وقت لاحق."
+=======
+>>>>>>> Add LMS Internationalisation support for Mongolian Language and LMS Themes
 
 #: common/static/bundles/EdlyStudentAccountDeletionInitializer.js
 #: common/static/bundles/StudentAccountDeletion.js
@@ -3148,7 +3170,7 @@ msgstr ""
 #: themes/st-lutherx/lms/static/js/student_account/components/StudentAccountDeletionModal.jsx
 #: themes/st-normanx/lms/static/js/student_account/components/StudentAccountDeletionModal.jsx
 msgid "A Password is required"
-msgstr "كلمة المرور مطلوبة"
+msgstr ""
 
 #: common/static/bundles/EdlyStudentAccountDeletionInitializer.js
 #: themes/st-lutherx/lms/static/js/student_account/components/StudentAccountDeletionModal.jsx
@@ -3158,9 +3180,12 @@ msgid ""
 " data is permanent and cannot be undone. Edly will not be able to recover "
 "your account or the data that is deleted."
 msgstr ""
+<<<<<<< HEAD
 "لقد حددت حذف حسابي. حذف حسابك والشخصية"
 "البيانات دائمة ولا يمكن التراجع عنها. لن يتمكن إدلي من استردادها"
 "حسابك أو البيانات التي تم حذفها."
+=======
+>>>>>>> Add LMS Internationalisation support for Mongolian Language and LMS Themes
 
 #: common/static/bundles/EdlyStudentAccountDeletionInitializer.js
 #: themes/st-lutherx/lms/static/js/student_account/components/StudentAccountDeletionModal.jsx
@@ -3169,8 +3194,11 @@ msgid ""
 "If you proceed, you cannot use it to take courses on the Edly app or any "
 "other site hosted by Edly."
 msgstr ""
+<<<<<<< HEAD
 "في حالة المتابعة ، لا يمكنك استخدامه لأخذ دورات في تطبيق Edly أو أي"
 "موقع آخر يستضيفه إدلي."
+=======
+>>>>>>> Add LMS Internationalisation support for Mongolian Language and LMS Themes
 
 #: common/static/bundles/EdlyStudentAccountDeletionInitializer.js
 #: common/static/bundles/StudentAccountDeletion.js
@@ -3182,8 +3210,11 @@ msgid ""
 "If you still wish to continue and delete your account, please enter your "
 "account password:"
 msgstr ""
+<<<<<<< HEAD
 "إذا كنت لا تزال ترغب في المتابعة وحذف حسابك ، فيرجى إدخال"
 "كلمة مرور الحساب:"
+=======
+>>>>>>> Add LMS Internationalisation support for Mongolian Language and LMS Themes
 
 #: common/static/bundles/EdlyStudentAccountDeletionInitializer.js
 #: common/static/bundles/StudentAccountDeletion.js
@@ -3192,7 +3223,7 @@ msgstr ""
 #: themes/st-lutherx/lms/static/js/student_account/components/StudentAccountDeletionModal.jsx
 #: themes/st-normanx/lms/static/js/student_account/components/StudentAccountDeletionModal.jsx
 msgid "Yes, Delete"
-msgstr "نعم احذف"
+msgstr ""
 
 #: common/static/bundles/EdlyStudentAccountDeletionInitializer.js
 #: common/static/bundles/StudentAccountDeletion.js
@@ -3201,7 +3232,7 @@ msgstr "نعم احذف"
 #: themes/st-lutherx/lms/static/js/student_account/components/StudentAccountDeletionModal.jsx
 #: themes/st-normanx/lms/static/js/student_account/components/StudentAccountDeletionModal.jsx
 msgid "We're sorry to see you go! Your account will be deleted shortly."
-msgstr "نحن آسفون أن نراك تذهب! سيتم حذف حسابك قريبا."
+msgstr ""
 
 #: common/static/bundles/EdlyStudentAccountDeletionInitializer.js
 #: common/static/bundles/StudentAccountDeletion.js
@@ -3214,15 +3245,22 @@ msgid ""
 "to fully process through our system. If you want to opt-out of emails before"
 " then, please unsubscribe from the footer of any email."
 msgstr ""
+<<<<<<< HEAD
 "قد يستغرق حذف الحساب ، بما في ذلك الإزالة من قوائم البريد الإلكتروني ، بضعة أسابيع"
 "للمعالجة الكاملة من خلال نظامنا. إذا كنت ترغب في إلغاء الاشتراك من رسائل البريد الإلكتروني من قبل"
 "ثم ، الرجاء إلغاء الاشتراك من تذييل أي بريد إلكتروني."
+=======
+>>>>>>> Add LMS Internationalisation support for Mongolian Language and LMS Themes
 
 #: common/static/bundles/EntitlementFactory.js
 #: common/static/bundles/ProgramDetailsFactory.js
 #: lms/static/js/learner_dashboard/models/course_card_model.js
 msgid "(Self-paced) Starts {start}"
+<<<<<<< HEAD
 msgstr "(ذاتية السرعة) يبدأ {start}"
+=======
+msgstr ""
+>>>>>>> Add LMS Internationalisation support for Mongolian Language and LMS Themes
 
 #: common/static/bundles/EntitlementFactory.js
 #: common/static/bundles/ProgramDetailsFactory.js
@@ -3234,37 +3272,41 @@ msgstr "(ذاتية السرعة) بدأت {start}"
 #: common/static/bundles/ProgramDetailsFactory.js
 #: lms/static/js/learner_dashboard/models/course_card_model.js
 msgid "(Self-paced) Ends {end}"
+<<<<<<< HEAD
 msgstr "(ذاتية السرعة) ينتهي {end}"
+=======
+msgstr ""
+>>>>>>> Add LMS Internationalisation support for Mongolian Language and LMS Themes
 
 #: common/static/bundles/EntitlementFactory.js
 #: common/static/bundles/ProgramDetailsFactory.js
 #: lms/static/js/learner_dashboard/models/course_card_model.js
 msgid "(Self-paced) Ended {end}"
-msgstr "(ذاتية السرعة) منتهية {end}"
+msgstr ""
 
 #: common/static/bundles/EntitlementFactory.js
 #: common/static/bundles/ProgramDetailsFactory.js
 #: lms/static/js/learner_dashboard/models/course_card_model.js
 msgid "Starts {start}"
-msgstr "يبدأ {start}"
+msgstr ""
 
 #: common/static/bundles/EntitlementFactory.js
 #: common/static/bundles/ProgramDetailsFactory.js
 #: lms/static/js/learner_dashboard/models/course_card_model.js
 msgid "Started {start}"
-msgstr "بدأت {start}"
+msgstr ""
 
 #: common/static/bundles/EntitlementFactory.js
 #: common/static/bundles/ProgramDetailsFactory.js
 #: lms/static/js/learner_dashboard/models/course_card_model.js
 msgid "Ends {end}"
-msgstr "ينتهي {end}"
+msgstr ""
 
 #: common/static/bundles/EntitlementFactory.js
 #: common/static/bundles/ProgramDetailsFactory.js
 #: lms/static/js/learner_dashboard/views/course_entitlement_view.js
 msgid "You must select a session to access the course."
-msgstr "يجب عليك تحديد جلسة للوصول إلى الدورة التدريبية."
+msgstr ""
 
 #: common/static/bundles/EntitlementFactory.js
 #: common/static/bundles/ProgramDetailsFactory.js
@@ -6057,21 +6099,24 @@ msgid ""
 "Your profile settings are managed by {enterprise_name}. Contact your "
 "administrator or {link_start}edX Support{link_end} for help."
 msgstr ""
+<<<<<<< HEAD
 "تتم إدارة إعدادات ملف التعريف الخاص بك بواسطة {enterprise_name}. اتصل بـ"
 "المسؤول أو {link_start} edX Support {link_end} للحصول على المساعدة."
+=======
+>>>>>>> Add LMS Internationalisation support for Mongolian Language and LMS Themes
 
 #: lms/static/js/student_account/views/account_settings_factory.js
 #: themes/st-lutherx/lms/static/js/student_account/views/edly_account_settings_factory.js
 #: themes/st-normanx/lms/static/js/student_account/views/edly_account_settings_factory.js
 msgid "Email Address (Sign In)"
-msgstr "عنوان البريد الإلكتروني (تسجيل الدخول)"
+msgstr ""
 
 #: lms/static/js/student_account/views/account_settings_factory.js
 #: themes/st-lutherx/lms/static/js/student_account/views/edly_account_settings_factory.js
 #: themes/st-normanx/lms/static/js/student_account/views/edly_account_settings_factory.js
 msgid ""
 "You receive messages from {platform_name} and course teams at this address."
-msgstr "تتلقى رسائل من {platform_name} وفرق الدورة التدريبية على هذا العنوان."
+msgstr ""
 
 #: lms/static/js/student_account/views/account_settings_factory.js
 #: themes/st-lutherx/lms/static/js/student_account/views/edly_account_settings_factory.js
@@ -6099,20 +6144,23 @@ msgid ""
 "The name that is used for ID verification and that appears on your "
 "certificates."
 msgstr ""
+<<<<<<< HEAD
 "الاسم المستخدم للتحقق من الهوية والذي يظهر على هاتفك"
 "شهادات"
+=======
+>>>>>>> Add LMS Internationalisation support for Mongolian Language and LMS Themes
 
 #: lms/static/js/student_account/views/account_settings_factory.js
 #: themes/st-lutherx/lms/static/js/student_account/views/edly_account_settings_factory.js
 #: themes/st-normanx/lms/static/js/student_account/views/edly_account_settings_factory.js
 msgid "Country or Region of Residence"
-msgstr "بلد أو منطقة الإقامة"
+msgstr ""
 
 #: lms/static/js/student_account/views/account_settings_factory.js
 #: themes/st-lutherx/lms/static/js/student_account/views/edly_account_settings_factory.js
 #: themes/st-normanx/lms/static/js/student_account/views/edly_account_settings_factory.js
 msgid "The country or region where you live."
-msgstr "البلد أو المنطقة التي تعيش فيها."
+msgstr ""
 
 #: lms/static/js/student_account/views/account_settings_factory.js
 #: themes/st-lutherx/lms/static/js/student_account/views/edly_account_settings_factory.js
@@ -6124,7 +6172,7 @@ msgstr "معلومات الحساب الأساسية"
 #: themes/st-lutherx/lms/static/js/student_account/views/edly_account_settings_factory.js
 #: themes/st-normanx/lms/static/js/student_account/views/edly_account_settings_factory.js
 msgid "These settings include basic information about your account."
-msgstr "تتضمن هذه الإعدادات معلومات أساسية عن حسابك."
+msgstr ""
 
 #: lms/static/js/student_account/views/account_settings_factory.js
 #: themes/st-lutherx/lms/static/js/student_account/views/edly_account_settings_factory.js
@@ -6133,8 +6181,11 @@ msgid ""
 "The name that identifies you on {platform_name}. You cannot change your "
 "username."
 msgstr ""
+<<<<<<< HEAD
 "الاسم الذي يحدد هويتك على {platform_name}. لا يمكنك تغيير اسمك"
 "اسم المستخدم."
+=======
+>>>>>>> Add LMS Internationalisation support for Mongolian Language and LMS Themes
 
 #: lms/static/js/student_account/views/account_settings_factory.js
 #: themes/st-lutherx/lms/static/js/student_account/views/edly_account_settings_factory.js
@@ -6147,7 +6198,7 @@ msgstr "كلمة المرور"
 #: themes/st-lutherx/lms/static/js/student_account/views/edly_account_settings_factory.js
 #: themes/st-normanx/lms/static/js/student_account/views/edly_account_settings_factory.js
 msgid "Check your email account for instructions to reset your password."
-msgstr "تحقق من حساب البريد الإلكتروني للحصول على تعليمات لإعادة تعيين كلمة المرور الخاصة بك."
+msgstr ""
 
 #: lms/static/js/student_account/views/account_settings_factory.js
 #: themes/st-lutherx/lms/static/js/student_account/views/edly_account_settings_factory.js
@@ -6157,9 +6208,12 @@ msgid ""
 "a limited number of languages. Changing the value of this field will cause "
 "the page to refresh."
 msgstr ""
+<<<<<<< HEAD
 "اللغة المستخدمة في هذا الموقع. هذا الموقع متاح حاليًا في"
 "عدد محدود من اللغات. تغيير قيمة هذا الحقل سوف يسبب"
 "الصفحة للتحديث."
+=======
+>>>>>>> Add LMS Internationalisation support for Mongolian Language and LMS Themes
 
 #: lms/static/js/student_account/views/account_settings_factory.js
 #: themes/st-lutherx/lms/static/js/student_account/views/edly_account_settings_factory.js
@@ -6229,34 +6283,52 @@ msgid ""
 "We've sent a confirmation message to {new_secondary_email_address}. Click "
 "the link in the message to update your secondary email address."
 msgstr ""
+<<<<<<< HEAD
 "لقد أرسلنا رسالة تأكيد إلى {new_secondary_email_address}. انقر على"
 "الرابط في الرسالة لتحديث عنوان بريدك الإلكتروني الثانوي."
+=======
+>>>>>>> Add LMS Internationalisation support for Mongolian Language and LMS Themes
 
 #: lms/static/js/student_account/views/account_settings_factory.js
 #: themes/st-lutherx/lms/static/js/student_account/views/edly_account_settings_factory.js
 #: themes/st-normanx/lms/static/js/student_account/views/edly_account_settings_factory.js
 msgid "Social Media Links"
+<<<<<<< HEAD
 msgstr "روابط وسائل التواصل الاجتماعي"
+=======
+msgstr ""
+>>>>>>> Add LMS Internationalisation support for Mongolian Language and LMS Themes
 
 #: lms/static/js/student_account/views/account_settings_factory.js
 msgid ""
 "Optionally, link your personal accounts to the social media icons on your "
 "edX profile."
 msgstr ""
+<<<<<<< HEAD
 "اختياريًا ، قم بربط حساباتك الشخصية بأيقونات وسائل التواصل الاجتماعي الموجودة على جهازك"
 "ملف تعريف edX."
+=======
+>>>>>>> Add LMS Internationalisation support for Mongolian Language and LMS Themes
 
 #: lms/static/js/student_account/views/account_settings_factory.js
 #: themes/st-lutherx/lms/static/js/student_account/views/edly_account_settings_factory.js
 #: themes/st-normanx/lms/static/js/student_account/views/edly_account_settings_factory.js
 msgid " Link"
+<<<<<<< HEAD
 msgstr "حلقة الوصل "
+=======
+msgstr ""
+>>>>>>> Add LMS Internationalisation support for Mongolian Language and LMS Themes
 
 #: lms/static/js/student_account/views/account_settings_factory.js
 #: themes/st-lutherx/lms/static/js/student_account/views/edly_account_settings_factory.js
 #: themes/st-normanx/lms/static/js/student_account/views/edly_account_settings_factory.js
 msgid "Enter your "
+<<<<<<< HEAD
 msgstr "ادخل "
+=======
+msgstr ""
+>>>>>>> Add LMS Internationalisation support for Mongolian Language and LMS Themes
 
 #: lms/static/js/student_account/views/account_settings_factory.js
 #: lms/static/js/student_account/views/account_settings_view.js
@@ -6394,7 +6466,7 @@ msgstr "معلومات الحساب الأساسية"
 #: themes/st-lutherx/lms/static/js/student_account/views/account_settings_view.js
 #: themes/st-normanx/lms/static/js/student_account/views/account_settings_view.js
 msgid "Order History"
-msgstr "تاريخ الطلب"
+msgstr ""
 
 #: lms/static/js/verify_student/views/image_input_view.js
 msgid "Image Upload Error"
@@ -6738,8 +6810,11 @@ msgid ""
 "Optionally, link your personal accounts to the social media icons on your "
 "Edly profile."
 msgstr ""
+<<<<<<< HEAD
 "اختياريًا ، قم بربط حساباتك الشخصية بأيقونات وسائل التواصل الاجتماعي الموجودة على جهازك"
 "الملف الشخصي إدي."
+=======
+>>>>>>> Add LMS Internationalisation support for Mongolian Language and LMS Themes
 
 #: cms/static/js/certificates/models/certificate.js
 msgid "Certificate name is required."
@@ -8478,7 +8553,7 @@ msgstr "أشّر الامتحان بعلامة ’استُكمل‘"
 
 #: lms/templates/courseware/proctored-exam-status.underscore
 msgid "timed"
-msgstr "موقوت"
+msgstr ""
 
 #: lms/templates/courseware/proctored-exam-status.underscore
 msgid ""
@@ -8494,7 +8569,7 @@ msgstr "أنهي امتحاني"
 
 #: lms/templates/courseware/proctored-exam-status.underscore
 msgid "Hide Timer"
-msgstr "إخفاء الموقت"
+msgstr ""
 
 #: lms/templates/discovery/course_card.underscore
 msgid "LEARN MORE"
