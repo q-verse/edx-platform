@@ -2321,6 +2321,9 @@ INSTALLED_APPS = [
     'csrf.apps.CsrfAppConfig',  # Enables frontend apps to retrieve CSRF tokens.
 
     'edly_panel_app',
+
+    # q-verse app for registration
+    'openedx.features.qverse_features.registration'
 ]
 
 ######################### CSRF #########################################
