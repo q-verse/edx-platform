@@ -7,6 +7,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from openedx.features.qverse_features.registration.models import BulkUserRegistration, QVerseUserProfile, Department
+from openedx.features.qverse_features.registration.tasks import send_bulk_mail_to_newly_created_students
 from student.models import UserProfile
 
 
@@ -16,13 +17,14 @@ LOGGER = logging.getLogger(__name__)
 @receiver(post_save, sender=BulkUserRegistration)
 def create_users_from_csv_file(sender, instance, created, **kwargs):
     """
-    Creates/Updates users and their profiles.
+    Creates/Updates users and their profiles and sends registration emails.
 
     Reads data from given csv file having user details. Then creates/updates
-    edx user, edx user profile and qverse user profile accordingly. It also
+    edx user, edx user profile and qverse user profile accordingly. It
     writes the status of creation/update on the given file by adding an
-    extra column named 'status' in it. Also handles the exceptions raised by
-    the functions that it calls.
+    extra column named 'status' in it. It handles the exceptions raised by
+    the functions that it calls. Also sends the registration email to newly
+    created users.
 
     Arguments:
         sender (ModelBase): responsible to initiate the signal
@@ -74,6 +76,7 @@ def create_users_from_csv_file(sender, instance, created, **kwargs):
                          .format(instance.admission_file.path, err))
     csv_file.close()
     _write_status_on_csv_file(instance.admission_file.path, output_file_rows)
+    send_bulk_mail_to_newly_created_students.delay(output_file_rows)
 
 
 def _create_or_update_edx_user(user_info):
