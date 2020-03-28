@@ -1,4 +1,4 @@
 {% load i18n %}
 {% autoescape off %}
-{% blocktrans %}{{ site_name }} Account Registration.{% endblocktrans %}
+{% blocktrans %}{{ site_name }} Account Registration{% endblocktrans %}
 {% endautoescape %}
