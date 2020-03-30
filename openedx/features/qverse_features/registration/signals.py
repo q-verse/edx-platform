@@ -5,24 +5,31 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError, transaction
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils.crypto import get_random_string
 
 from openedx.features.qverse_features.registration.models import BulkUserRegistration, QVerseUserProfile, Department
+from openedx.features.qverse_features.registration.tasks import send_bulk_mail_to_newly_created_students
 from student.models import UserProfile
 
 
 LOGGER = logging.getLogger(__name__)
+# User creation statuses
+USER_CREATED = 'Created'
+USER_UPDATED = 'Updated'
+USER_CREATION_FAILED = 'Failed'
 
 
 @receiver(post_save, sender=BulkUserRegistration)
 def create_users_from_csv_file(sender, instance, created, **kwargs):
     """
-    Creates/Updates users and their profiles.
+    Creates/Updates users, their profiles and sends registration emails.
 
     Reads data from given csv file having user details. Then creates/updates
-    edx user, edx user profile and qverse user profile accordingly. It also
+    edx user, edx user profile and qverse user profile accordingly. It
     writes the status of creation/update on the given file by adding an
-    extra column named 'status' in it. Also handles the exceptions raised by
-    the functions that it calls.
+    extra column named 'status' in it. It handles all the exceptions raised by
+    any function called inside it. Also sends the registration email to newly
+    created users.
 
     Arguments:
         sender (ModelBase): responsible to initiate the signal
@@ -62,11 +69,11 @@ def create_users_from_csv_file(sender, instance, created, **kwargs):
                 except IntegrityError as error:
                     LOGGER.exception('Error while creating/updating ({}) user and its '
                                      'profiles with the following errors {}.'.format(row.get('regno'), error))
-                    row['status'] = 'Failed'
+                    row['status'] = USER_CREATION_FAILED
             else:
                 LOGGER.exception('Error while creating/updating ({}) user and its profiles because of invalid values '
                                  'of required fields.'.format(row.get('regno')))
-                row['status'] = 'Failed'
+                row['status'] = USER_CREATION_FAILED
 
             output_file_rows.append(row)
     except Error as err:
@@ -74,6 +81,8 @@ def create_users_from_csv_file(sender, instance, created, **kwargs):
                          .format(instance.admission_file.path, err))
     csv_file.close()
     _write_status_on_csv_file(instance.admission_file.path, output_file_rows)
+    new_students = [student for student in output_file_rows if student.get('status') == USER_CREATED]
+    send_bulk_mail_to_newly_created_students.delay(new_students)
 
 
 def _create_or_update_edx_user(user_info):
@@ -95,7 +104,8 @@ def _create_or_update_edx_user(user_info):
 
     edx_user, created = User.objects.update_or_create(username=user_info.get('regno'), defaults=user_data)
     if created:
-        edx_user.set_password(user_info.get('regno'))
+        user_info['password'] = get_random_string()
+        edx_user.set_password(user_info['password'])
         edx_user.save()
         LOGGER.info('{} user has been created.'.format(edx_user.username))
     else:
@@ -134,7 +144,7 @@ def _create_or_update_qverse_user_profile(edx_user, user_info):
         department = Department.objects.get(number=user_info.get('departmentid'))
     except Department.DoesNotExist:
         LOGGER.exception('The Department with id {} does not exist.'.format(user_info.get('departmentid')))
-        user_info['status'] = 'Failed'
+        user_info['status'] = USER_CREATION_FAILED
         return
 
     qverse_profile_data = {
@@ -148,10 +158,10 @@ def _create_or_update_qverse_user_profile(edx_user, user_info):
     _, created = QVerseUserProfile.objects.update_or_create(user=edx_user, defaults=qverse_profile_data)
     if created:
         LOGGER.info('{} qverse profile has been created.'.format(edx_user.username))
-        user_info['status'] = 'Created'
+        user_info['status'] = USER_CREATED
     else:
         LOGGER.info('{} qverse profile has been updated.'.format(edx_user.username))
-        user_info['status'] = 'Updated'
+        user_info['status'] = USER_UPDATED
 
 
 def _write_status_on_csv_file(filename, output_file_rows):
