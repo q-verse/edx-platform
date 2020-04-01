@@ -5,6 +5,7 @@ from celery.task import task
 from celery.utils.log import get_task_logger
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 from edx_ace import ace
 from edx_ace.recipient import Recipient
 
@@ -18,16 +19,16 @@ ACE_ROUTING_KEY = getattr(settings, 'ACE_ROUTING_KEY', None)
 
 
 @task(routing_key=ACE_ROUTING_KEY)
-def send_bulk_mail_to_newly_created_students(new_students, context):
+def send_bulk_mail_to_newly_created_students(new_students, site_id):
     """
     A celery task, responsible to send registration email to newly created users.
 
     Arguments:
         students (list): A list of dicts containing information about newly created
                          users
-        context (dict): A dict containing required values like site
+        site_id (int): Current site id
     """
-    site = context.get('site')
+    site = Site.objects.get(id=site_id)
     context = get_base_template_context(site)
     context['site_name'] = site.domain
     for new_student in new_students:

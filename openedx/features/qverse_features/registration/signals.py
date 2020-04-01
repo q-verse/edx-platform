@@ -83,10 +83,8 @@ def create_users_from_csv_file(sender, instance, created, **kwargs):
     csv_file.close()
     _write_status_on_csv_file(instance.admission_file.path, output_file_rows)
     new_students = [student for student in output_file_rows if student.get('status') == USER_CREATED]
-    context = {
-        'site': get_current_site()
-    }
-    send_bulk_mail_to_newly_created_students.delay(new_students, context)
+    site = get_current_site()
+    send_bulk_mail_to_newly_created_students.delay(new_students, site.id)
 
 
 def _create_or_update_edx_user(user_info):
