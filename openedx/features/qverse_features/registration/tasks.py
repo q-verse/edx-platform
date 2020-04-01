@@ -9,7 +9,6 @@ from edx_ace import ace
 from edx_ace.recipient import Recipient
 
 from openedx.core.djangoapps.ace_common.template_context import get_base_template_context
-from openedx.core.djangoapps.theming.helpers import get_current_site
 from openedx.core.lib.celery.task_utils import emulate_http_request
 from openedx.features.qverse_features.registration.message_types import RegistrationNotification
 
@@ -19,15 +18,16 @@ ACE_ROUTING_KEY = getattr(settings, 'ACE_ROUTING_KEY', None)
 
 
 @task(routing_key=ACE_ROUTING_KEY)
-def send_bulk_mail_to_newly_created_students(new_students):
+def send_bulk_mail_to_newly_created_students(new_students, context):
     """
     A celery task, responsible to send registration email to newly created users.
 
     Arguments:
         students (list): A list of dicts containing information about newly created
                          users
+        context (dict): A dict containing required values like site
     """
-    site = get_current_site()
+    site = context.get('site')
     context = get_base_template_context(site)
     context['site_name'] = site.domain
     for new_student in new_students:

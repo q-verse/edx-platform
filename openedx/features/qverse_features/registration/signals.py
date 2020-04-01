@@ -7,6 +7,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.crypto import get_random_string
 
+from openedx.core.djangoapps.theming.helpers import get_current_site
 from openedx.features.qverse_features.registration.models import BulkUserRegistration, QVerseUserProfile, Department
 from openedx.features.qverse_features.registration.tasks import send_bulk_mail_to_newly_created_students
 from student.models import UserProfile
@@ -82,7 +83,10 @@ def create_users_from_csv_file(sender, instance, created, **kwargs):
     csv_file.close()
     _write_status_on_csv_file(instance.admission_file.path, output_file_rows)
     new_students = [student for student in output_file_rows if student.get('status') == USER_CREATED]
-    send_bulk_mail_to_newly_created_students.delay(new_students)
+    context = {
+        'site': get_current_site()
+    }
+    send_bulk_mail_to_newly_created_students.delay(new_students, context)
 
 
 def _create_or_update_edx_user(user_info):
