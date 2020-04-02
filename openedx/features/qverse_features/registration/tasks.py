@@ -29,8 +29,9 @@ def send_bulk_mail_to_newly_created_students(new_students, site_id):
         site_id (int): Current site id
     """
     site = Site.objects.get(id=site_id)
-    context = get_base_template_context(site)
-    context['site_name'] = site.domain
+    context = {
+        'site_name': site.domain
+    }
     for new_student in new_students:
         user = None
         try:
@@ -38,14 +39,15 @@ def send_bulk_mail_to_newly_created_students(new_students, site_id):
         except User.DoesNotExist:
             continue
 
-        context.update(new_student)
-        message = RegistrationNotification().personalize(
-            recipient=Recipient(username=user.username, email_address=user.email),
-            language='en',
-            user_context=context,
-        )
-
         with emulate_http_request(site=site, user=user):
+            context.update(get_base_template_context(site))
+            context.update(new_student)
+            message = RegistrationNotification().personalize(
+                recipient=Recipient(username=user.username, email_address=user.email),
+                language='en',
+                user_context=context,
+            )
+
             try:
                 LOGGER.info('Attempting to send registration notification to newly created user ({}).'
                             .format(user.username))
