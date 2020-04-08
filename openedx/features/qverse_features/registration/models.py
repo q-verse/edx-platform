@@ -101,7 +101,7 @@ class QVerseUserProfile(models.Model):
 
         This would help us to ensure unique constraint of registration number.
         """
-        self.registration_number = self.registration_number.title()
+        self.registration_number = self.registration_number.upper()
         return super(QVerseUserProfile, self).save(*args, **kwargs)
 
     def __str__(self):
