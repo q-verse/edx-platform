@@ -111,6 +111,7 @@ def _create_or_update_edx_user(user_info):
         edx_user.save()
         LOGGER.info('{} user has been created.'.format(edx_user.username))
     else:
+        user_info['password'] = 'N/A'
         LOGGER.info('{} user has been updated.'.format(edx_user.username))
     return edx_user
 
