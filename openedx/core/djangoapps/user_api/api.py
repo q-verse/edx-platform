@@ -213,8 +213,9 @@ def _apply_third_party_auth_overrides(request, form_desc):
 
 class RegistrationFormFactory(object):
     """HTTP end-points for creating a new user. """
-
-    DEFAULT_FIELDS = ["email", "name", "username", "password"]
+    # To remove full name field from the registration form shown to the user
+    # the "name" field has been removed from DEFAULT_FIELDS
+    DEFAULT_FIELDS = ["email", "username", "password"]
 
     EXTRA_FIELDS = [
         "confirm_email",
