@@ -1,40 +1,42 @@
+"""
+Signals for qverse registration application.
+"""
 import logging
 from csv import DictReader, DictWriter, Error, Sniffer
 
-from django.contrib.auth.models import User
-from django.db import IntegrityError, transaction
+from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.utils.crypto import get_random_string
 
-from openedx.core.djangoapps.theming.helpers import get_current_site
-from openedx.features.qverse_features.registration.models import BulkUserRegistration, QVerseUserProfile, Department
-from openedx.features.qverse_features.registration.tasks import send_bulk_mail_to_newly_created_students
-from student.models import UserProfile
+from openedx.features.qverse_features.registration.models import (AdmissionData, Department, ProspectiveUser,
+                                                                  REGISTRATION_NUMBER_MAX_LENGTH, SURNAME_MAX_LENGTH,
+                                                                  FIRST_NAME_MAX_LENGTH, MOBILE_NUMBER_MAX_LENGTH,
+                                                                  OTHER_NAME_MAX_LENGTH, MAX_LEVEL_CHOICES,
+                                                                  MAX_PROGRAMME_CHOICES)
 
 
 LOGGER = logging.getLogger(__name__)
-# User creation statuses
-USER_CREATED = 'Created'
-USER_UPDATED = 'Updated'
-USER_CREATION_FAILED = 'Failed'
+# Prospectice User creation statuses
+PROSPECTIVE_USER_CREATED = 'Created'
+PROSPECTIVE_USER_UPDATED = 'Updated'
+PROSPECTIVE_USER_CREATION_FAILED = 'Failed'
 
 
-@receiver(post_save, sender=BulkUserRegistration)
-def create_users_from_csv_file(sender, instance, created, **kwargs):
+@receiver(post_save, sender=AdmissionData)
+def create_prospective_users_from_csv_file(sender, instance, created, **kwargs):
     """
-    Creates/Updates users, their profiles and sends registration emails.
+    Creates/Updates prospective users.
 
     Reads data from given csv file having user details. Then creates/updates
-    edx user, edx user profile and qverse user profile accordingly. It
-    writes the status of creation/update on the given file by adding an
-    extra column named 'status' in it. It handles all the exceptions raised by
-    any function called inside it. Also sends the registration email to newly
-    created users.
+    prospective users accordingly. It writes the status of creation/update/failure
+    on the given file by adding an extra column named 'status' in it. In case of
+    any error occurred, it writes it on the given file by adding an extra column
+    named 'error'.
 
     Arguments:
         sender (ModelBase): responsible to initiate the signal
-        instance (BulkUserRegistration): newly created/updated object of BulkUserRegistration
+        instance (AdmissionData): newly created/updated object of AdmissionData
         created (bool): Is created/updated?
         kwargs (dict): Other info
     """
@@ -58,23 +60,41 @@ def create_users_from_csv_file(sender, instance, created, **kwargs):
     try:
         for row in reader:
             row['status'] = ''
-            if _validate_single_csv_row(row):
+            row['error'] = ''
+            is_valid_row, errors = _validate_single_csv_row(row)
+            if is_valid_row:
                 try:
-                    # Creating/Updating edX User, edX User Profile and QVerse User Profile
-                    # will be an atomic operation. If one operation fails the previous
-                    # successfull operations will be reverted and no changes will be applied.
-                    with transaction.atomic():
-                        edx_user = _create_or_update_edx_user(row)
-                        _create_or_update_edx_user_profile(edx_user)
-                        _create_or_update_qverse_user_profile(edx_user, row)
-                except IntegrityError as error:
+                    department = Department.objects.get(number=row['departmentid'])
+                    user_data = {
+                        'email': row['email'],
+                        'first_name': row['firstname'],
+                        'surname': row['surname'],
+                        'other_name': row['othername'],
+                        'department': department,
+                        'current_level': row['levelid'],
+                        'programme': row['programmeid'],
+                        'mobile_number': row['mobile']
+                    }
+                    _, created = ProspectiveUser.objects.update_or_create(registration_number=row['regno'],
+                                                                          defaults=user_data)
+                    if created:
+                        row['status'] = PROSPECTIVE_USER_CREATED
+                    else:
+                        row['status'] = PROSPECTIVE_USER_UPDATED
+                except (IntegrityError, Department.DoesNotExist, ValidationError) as error:
                     LOGGER.exception('Error while creating/updating ({}) user and its '
                                      'profiles with the following errors {}.'.format(row.get('regno'), error))
-                    row['status'] = USER_CREATION_FAILED
+                    row['status'] = PROSPECTIVE_USER_CREATION_FAILED
+                    if type(error) == IntegrityError:
+                        row['error'] = 'Duplicate entry for email {}'.format(row['email'])
+                    else:
+                        row['error'] = error.message
+
             else:
                 LOGGER.exception('Error while creating/updating ({}) user and its profiles because of invalid values '
-                                 'of required fields.'.format(row.get('regno')))
-                row['status'] = USER_CREATION_FAILED
+                                 'of required fields with the following errors ({}).'.format(row.get('regno'), errors))
+                row['status'] = PROSPECTIVE_USER_CREATION_FAILED
+                row['error'] = errors
 
             output_file_rows.append(row)
     except Error as err:
@@ -82,89 +102,6 @@ def create_users_from_csv_file(sender, instance, created, **kwargs):
                          .format(instance.admission_file.path, err))
     csv_file.close()
     _write_status_on_csv_file(instance.admission_file.path, output_file_rows)
-    new_students = [student for student in output_file_rows if student.get('status') == USER_CREATED]
-    site = get_current_site()
-    send_bulk_mail_to_newly_created_students.delay(new_students, site.id)
-
-
-def _create_or_update_edx_user(user_info):
-    """
-    Creates/Updates edx user from given information.
-
-    Arguments:
-        user_info (dict): A dict containing user information
-
-    Returns:
-        edx_user (User): A newly created/updated User object
-    """
-    user_data = {
-                    'email': user_info.get('email'),
-                    'first_name': user_info.get('firstname'),
-                    'last_name': user_info.get('surname'),
-                    'is_active': True
-                }
-
-    edx_user, created = User.objects.update_or_create(username=user_info.get('regno'), defaults=user_data)
-    if created:
-        user_info['password'] = get_random_string()
-        edx_user.set_password(user_info['password'])
-        edx_user.save()
-        LOGGER.info('{} user has been created.'.format(edx_user.username))
-    else:
-        user_info['password'] = 'N/A'
-        LOGGER.info('{} user has been updated.'.format(edx_user.username))
-    return edx_user
-
-
-def _create_or_update_edx_user_profile(edx_user):
-    """
-    Creates/Updates edx user profile.
-
-    Arguments:
-        edx_user (User): An edx user instance whose profile is going to be created/updated
-    """
-    full_name = '{} {}'.format(edx_user.first_name, edx_user.last_name)
-    _, created = UserProfile.objects.update_or_create(user=edx_user, defaults={'name': full_name})
-    if created:
-        LOGGER.info('{} edx profile has been created.'.format(edx_user.username))
-    else:
-        LOGGER.info('{} edx profile has been updated.'.format(edx_user.username))
-
-
-def _create_or_update_qverse_user_profile(edx_user, user_info):
-    """
-    Creates/Updates qverse user profile.
-
-    It also stores the status of the creation/update in the receiving list which
-    contains the content which will be written on output file.
-
-    Arguments:
-        edx_user (User): An edx user instance whose qverse profile is going to be created/updated
-        user_info (dict): User info whose profile is going to be created/updated
-    """
-    department = None
-    try:
-        department = Department.objects.get(number=user_info.get('departmentid'))
-    except Department.DoesNotExist:
-        LOGGER.exception('The Department with id {} does not exist.'.format(user_info.get('departmentid')))
-        user_info['status'] = USER_CREATION_FAILED
-        return
-
-    qverse_profile_data = {
-                            'current_level': user_info.get('levelid'),
-                            'other_name': user_info.get('othername'),
-                            'mobile_number': user_info.get('mobile'),
-                            'programme': user_info.get('programmeid'),
-                            'department': department,
-                            'registration_number': user_info.get('regno')
-                          }
-    _, created = QVerseUserProfile.objects.update_or_create(user=edx_user, defaults=qverse_profile_data)
-    if created:
-        LOGGER.info('{} qverse profile has been created.'.format(edx_user.username))
-        user_info['status'] = USER_CREATED
-    else:
-        LOGGER.info('{} qverse profile has been updated.'.format(edx_user.username))
-        user_info['status'] = USER_UPDATED
 
 
 def _write_status_on_csv_file(filename, output_file_rows):
@@ -178,7 +115,12 @@ def _write_status_on_csv_file(filename, output_file_rows):
     try:
         with open(filename, 'w') as csv_file:
             if output_file_rows:
-                writer = DictWriter(csv_file, fieldnames=output_file_rows[0].keys())
+                # to maintain the order of fields in csv
+                fieldnames = [
+                    'regno', 'email', 'firstname', 'surname', 'othername', 'mobile',
+                    'departmentid', 'programmeid', 'levelid', 'status', 'error'
+                ]
+                writer = DictWriter(csv_file, fieldnames=fieldnames)
                 writer.writeheader()
                 for row in output_file_rows:
                     writer.writerow(row)
@@ -192,9 +134,46 @@ def _validate_single_csv_row(row):
 
     Arguments:
         row (dict): Contains the single row of data from CSV file
+
+    Returns:
+        status (bool): Tells that csv row is valid or not
+        errors (str): Returns all the errors if occurred
     """
     OPTIONAL_FIELDS = [
-        'mobile', 'othername', 'status'
+        'mobile', 'othername', 'status', 'error'
     ]
-    required_values = [value for (key, value) in row.items() if key not in OPTIONAL_FIELDS]
-    return all(required_values)
+    required_values = [value.strip() if value else value for (key, value) in row.items() if key not in OPTIONAL_FIELDS]
+    all_values_available = all(required_values)
+
+    if not all_values_available:
+        return False, 'Please provide values for all required fields.'
+
+    errors = []
+    if len(row['regno']) > REGISTRATION_NUMBER_MAX_LENGTH:
+        errors.append('Registration number is more than {} characters long.'.format(REGISTRATION_NUMBER_MAX_LENGTH))
+
+    if len(row['firstname']) > FIRST_NAME_MAX_LENGTH:
+        errors.append('First name is more than {} characters long.'.format(FIRST_NAME_MAX_LENGTH))
+
+    if len(row['surname']) > SURNAME_MAX_LENGTH:
+        errors.append('Surname is more than {} characters long.'.format(SURNAME_MAX_LENGTH))
+
+    if len(row['othername']) > OTHER_NAME_MAX_LENGTH:
+        errors.append('Other name is more than {} characters long.'.format(OTHER_NAME_MAX_LENGTH))
+
+    if len(row['mobile']) > MOBILE_NUMBER_MAX_LENGTH:
+        errors.append('Mobile number is more than {} characters long.'.format(MOBILE_NUMBER_MAX_LENGTH))
+
+    if int(row['levelid']) < 1 or int(row['levelid']) > MAX_LEVEL_CHOICES:
+        errors.append('Level ID must be greater than 0 and smaller than {}.'.format(MAX_LEVEL_CHOICES+1))
+
+    if int(row['programmeid']) < 1 or int(row['programmeid']) > MAX_PROGRAMME_CHOICES:
+        errors.append('Programme ID must be greater than 0 and smaller than {}.'.format(MAX_PROGRAMME_CHOICES+1))
+
+    if errors:
+        # to write multiple lines
+        # in a single cell of csv
+        errors = '"{}"'.format('\n'.join(errors))
+        return False, errors
+
+    return True, None
