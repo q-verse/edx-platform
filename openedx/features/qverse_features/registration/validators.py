@@ -48,7 +48,7 @@ def validate_current_level(value):
     # to avoid circular import
     from openedx.features.qverse_features.registration.models import MAX_LEVEL_CHOICES
 
-    if value not in range(1, MAX_LEVEL_CHOICES + 1):
+    if value < 1 or value > MAX_LEVEL_CHOICES:
         raise ValidationError('', code='invalid')
 
 
@@ -62,5 +62,5 @@ def validate_programme_choices(value):
     # to avoid circular import
     from openedx.features.qverse_features.registration.models import MAX_PROGRAMME_CHOICES
 
-    if value not in range(1, MAX_PROGRAMME_CHOICES + 1):
+    if value < 1 or value > MAX_PROGRAMME_CHOICES:
         raise ValidationError('', code='invalid')
