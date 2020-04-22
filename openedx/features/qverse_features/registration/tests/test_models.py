@@ -1,46 +1,33 @@
 """
 Unit tests for QVerse registration app models.
 """
-import mock
 import os
 
-from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 from django.test import TestCase
 
-from openedx.features.qverse_features.registration.models import BulkUserRegistration, QVerseUserProfile
-from openedx.features.qverse_features.registration.tests.factories import DepartmentFactory, QVerseUserProfileFactory
-from student.models import UserProfile
+from openedx.features.qverse_features.registration.models import AdmissionData, ProspectiveUser
+from openedx.features.qverse_features.registration.tests.factories import (DepartmentFactory,
+                                                                           QVerseUserProfileFactory,
+                                                                           ProspectiveUserFactory)
 
 
-class BulkUserRegistrationTests(TestCase):
+class AdmissionDataTests(TestCase):
     """
-    Tests for BulkUserRegistration model.
+    Tests for AdmissionData model.
     """
     def setUp(self):
         self.file_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures')
         DepartmentFactory(number=1)
 
-    @mock.patch(
-        'openedx.features.qverse_features.registration.signals.get_current_site',
-        autospec=True
-    )
-    @mock.patch(
-        'openedx.features.qverse_features.registration.signals.send_bulk_mail_to_newly_created_students.delay',
-        autospec=True
-    )
-    def test_bulk_user_registration_with_valid_admission_file(self, mocked_mail, mocked_site):
+    def test_bulk_user_registration_with_valid_admission_file(self):
         file_path = os.path.join(self.file_directory, 'admission_file.csv')
         with open(file_path, 'r') as admission_file:
-            BulkUserRegistration.objects.create(admission_file=ContentFile(admission_file.read(), 'admission_file.csv'),
-                                                description='Testing Batch')
+            AdmissionData.objects.create(admission_file=ContentFile(admission_file.read(), 'admission_file.csv'),
+                                         description='Testing Batch')
 
-            self.assertEqual(User.objects.all().count(), 2)
-            self.assertEqual(UserProfile.objects.all().count(), 2)
-            self.assertEqual(QVerseUserProfile.objects.all().count(), 2)
-            self.assertTrue(mocked_site.called)
-            self.assertTrue(mocked_mail.called)
-            self.assertEqual(str(BulkUserRegistration.objects.first()), 'Testing Batch')
+            self.assertEqual(ProspectiveUser.objects.all().count(), 2)
+            self.assertEqual(str(AdmissionData.objects.first()), 'Testing Batch')
 
 
 class DepartmentTests(TestCase):
@@ -59,7 +46,19 @@ class QVerseUserProfileTests(TestCase):
     Tests for QVerseUserProfile Model.
     """
     def setUp(self):
-        self.qverse_profile = QVerseUserProfileFactory()
+        self.prospective_user = ProspectiveUserFactory()
+        self.qverse_profile = QVerseUserProfileFactory(registration_number=self.prospective_user.registration_number)
 
     def test_qverse_user_profile_string_representation(self):
-        self.assertEqual(str(self.qverse_profile), '(ROBOT0) --- Robot0 Test')
+        self.assertEqual(str(self.qverse_profile), '(0) --- Robot0 Test')
+
+
+class ProspectiveUserTests(TestCase):
+    """
+    Tests for ProspectiveUser Model.
+    """
+    def setUp(self):
+        self.prospective_user = ProspectiveUserFactory()
+
+    def test_prospective_user_string_representation(self):
+        self.assertEqual(str(self.prospective_user), '(1) --- robot-first-name-1 robot-surname-1')
