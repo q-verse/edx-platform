@@ -21,7 +21,7 @@ def validate_admission_file(file):
 
     FIELD_NAMES = [
                 'regno', 'firstname', 'surname', 'othername', 'levelid',
-                'programmeid', 'departmentid', 'mobile', 'email', 'mobile'
+                'programmeid', 'departmentid', 'mobile', 'email'
                 ]
     decoded_file = file.read().decode('utf-8')
     io_string = io.StringIO(decoded_file)
@@ -35,6 +35,15 @@ def validate_admission_file(file):
         raise ValidationError('', code='invalid')
 
     if not all(field_name in header_row for field_name in FIELD_NAMES):
+        raise ValidationError('', code='invalid')
+
+    if 'error' in header_row:
+        header_row.remove('error')
+
+    if 'status' in header_row:
+        header_row.remove('status')
+
+    if len(header_row) != len(FIELD_NAMES):
         raise ValidationError('', code='invalid')
 
 
