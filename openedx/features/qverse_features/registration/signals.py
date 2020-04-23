@@ -87,7 +87,7 @@ def create_prospective_users_from_csv_file(sender, instance, created, **kwargs):
                         row['status'] = PROSPECTIVE_USER_CREATED
                     else:
                         row['status'] = PROSPECTIVE_USER_UPDATED
-                except (IntegrityError, Department.DoesNotExist, ValidationError) as error:
+                except (IntegrityError, Department.DoesNotExist, ValidationError, ValueError) as error:
                     LOGGER.exception('Error while creating/updating ({}) prospective user '
                                      'with the following errors {}.'.format(row.get('regno'), error))
                     row['status'] = PROSPECTIVE_USER_CREATION_FAILED
