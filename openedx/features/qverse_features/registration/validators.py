@@ -10,7 +10,6 @@ from django.core.exceptions import ValidationError
 def validate_admission_file(file):
     """
     Validates that the file is a valid csv file by checking its extension.
-
     Also checks that the header row has all the required fields.
 
     Arguments:
