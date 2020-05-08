@@ -1,0 +1,17 @@
+{% load i18n %}{% autoescape off %}{% blocktrans %}Dear {{ firstname }},{% endblocktrans %}
+
+
+{% blocktrans %}You have been registered successfully on {{ site_name }}.{% endblocktrans %}
+
+
+{% blocktrans %}This is your login information:{% endblocktrans %}
+
+{% blocktrans %}Registration Number (username): {{ regno }}{% endblocktrans %}
+{% blocktrans %}Email: {{ email }}{% endblocktrans %}
+{% blocktrans %}Password: {{ password }}{% endblocktrans %}
+
+
+----
+{% blocktrans %}Thanks,{% endblocktrans %}
+{% blocktrans %}{{ platform_name }}{% endblocktrans %}
+{% endautoescape %}

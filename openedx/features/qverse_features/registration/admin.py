@@ -6,13 +6,11 @@ from __future__ import unicode_literals
 
 from django.contrib import admin
 
-from openedx.features.qverse_features.registration.models import (AdmissionData,
+from openedx.features.qverse_features.registration.models import (BulkUserRegistration,
                                                                   Department,
-                                                                  QVerseUserProfile,
-                                                                  ProspectiveUser)
+                                                                  QVerseUserProfile)
 
 
-admin.site.register(AdmissionData)
+admin.site.register(BulkUserRegistration)
 admin.site.register(Department)
 admin.site.register(QVerseUserProfile)
-admin.site.register(ProspectiveUser)
