@@ -5,11 +5,15 @@ from celery.task import task
 from celery.utils.log import get_task_logger
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.models import Site
+from django.urls import reverse
+from django.utils.http import int_to_base36
 from edx_ace import ace
 from edx_ace.recipient import Recipient
 
 from openedx.core.djangoapps.ace_common.template_context import get_base_template_context
+from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
 from openedx.core.lib.celery.task_utils import emulate_http_request
 from openedx.features.qverse_features.registration.message_types import RegistrationNotification
 
@@ -19,7 +23,7 @@ ACE_ROUTING_KEY = getattr(settings, 'ACE_ROUTING_KEY', None)
 
 
 @task(routing_key=ACE_ROUTING_KEY)
-def send_bulk_mail_to_newly_created_students(new_students, site_id):
+def send_bulk_mail_to_newly_created_students(new_students, site_id, protocol):
     """
     A celery task, responsible to send registration email to newly created users.
 
@@ -43,6 +47,17 @@ def send_bulk_mail_to_newly_created_students(new_students, site_id):
         with emulate_http_request(site=site, user=user):
             context.update(get_base_template_context(site))
             context.update(new_student)
+            context.update({
+                'reset_password_link': '{protocol}://{site}{link}'.format(
+                    protocol=protocol,
+                    site=configuration_helpers.get_value('SITE_NAME', settings.SITE_NAME),
+                    link=reverse('password_reset_confirm', kwargs={
+                        'uidb36': int_to_base36(user.id),
+                        'token': default_token_generator.make_token(user),
+                    }),
+                )
+            })
+
             message = RegistrationNotification().personalize(
                 recipient=Recipient(username=user.username, email_address=user.email),
                 language='en',

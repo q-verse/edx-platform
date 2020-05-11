@@ -15,15 +15,9 @@
 
             <p style="color: rgba(0,0,0,.75);">
                 {% blocktrans %}
-                    You have been registered successfully on {{ site_name }}.
+                    You have been successfully registered on {{ site_name }} with the following credentials:
                 {% endblocktrans %}
                 <br />
-            </p>
-
-            <p style="color: rgba(0,0,0,.75);">
-                {% blocktrans %}
-                    This is your login information:
-                {% endblocktrans %}
             </p>
 
             <p style="color: rgba(0,0,0,.75);">
@@ -32,18 +26,11 @@
                 <br />
                 <b>{% blocktrans %}Email:{% endblocktrans %}</b>
                 {% blocktrans %}{{ email }}{% endblocktrans %}
-                <br />
-                <b>{% blocktrans %}Password:{% endblocktrans %}</b>
-                {% blocktrans %}{{ password }}{% endblocktrans %}
             </p>
 
             <p style="color: rgba(0,0,0,.75);">
-                {% blocktrans %}A random password has been set for your account. You should change it after login.{% endblocktrans %}
-            </p>
-
-            <p style="color: rgba(0,0,0,.75);">
-                {% blocktrans %} Click here to login: {% endblocktrans %}
-                <a class="login" href="{% with_link_tracking dashboard_url %}" style="color: #005686;">{% with_link_tracking dashboard_url %}</a>
+                <b>{% blocktrans %}Click on the link below to set your account password:{% endblocktrans %}</b>
+                <a class="login" href="{{ reset_password_link }}" style="color: #005686;">{{ reset_password_link }}</a>
             </p>
 
             <p style="color: rgba(0,0,0,.75);">
