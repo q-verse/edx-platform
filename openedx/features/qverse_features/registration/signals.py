@@ -12,7 +12,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.crypto import get_random_string
 
-from openedx.core.djangoapps.theming.helpers import get_current_site
+from openedx.core.djangoapps.theming.helpers import get_current_site, get_current_request
 from openedx.features.qverse_features.registration.models import (BulkUserRegistration, QVerseUserProfile,
                                                                   Department, REGISTRATION_NUMBER_MAX_LENGTH,
                                                                   SURNAME_MAX_LENGTH, FIRST_NAME_MAX_LENGTH,
@@ -68,7 +68,6 @@ def create_users_from_csv_file(sender, instance, created, **kwargs):
         for row in reader:
             row['status'] = ''
             row['error'] = ''
-            row['password'] = ''
             is_valid_row, errors = CsvRowValidator.validate_csv_row(row)
 
             if is_valid_row:
@@ -99,7 +98,8 @@ def create_users_from_csv_file(sender, instance, created, **kwargs):
     _write_status_on_csv_file(instance.admission_file.path, output_file_rows)
     new_students = [student for student in output_file_rows if student.get('status') == USER_CREATED]
     site = get_current_site()
-    send_bulk_mail_to_newly_created_students.delay(new_students, site.id)
+    protocol = 'https' if get_current_request().is_secure() else 'http'
+    send_bulk_mail_to_newly_created_students.delay(new_students, site.id, protocol)
 
 
 def _create_or_update_edx_user(user_info):
@@ -121,12 +121,10 @@ def _create_or_update_edx_user(user_info):
 
     edx_user, created = User.objects.update_or_create(username=user_info.get('regno'), defaults=user_data)
     if created:
-        user_info['password'] = get_random_string()
-        edx_user.set_password(user_info['password'])
+        edx_user.set_password(get_random_string())
         edx_user.save()
         LOGGER.info('{} user has been created.'.format(edx_user.username))
     else:
-        user_info['password'] = 'N/A'
         LOGGER.info('{} user has been updated.'.format(edx_user.username))
     return edx_user
 
@@ -189,7 +187,7 @@ def _write_status_on_csv_file(filename, output_file_rows):
                 # to maintain the order of fields in csv
                 fieldnames = [
                     'regno', 'email', 'firstname', 'surname', 'othername', 'mobile',
-                    'departmentid', 'programmeid', 'levelid', 'status', 'error', 'password'
+                    'departmentid', 'programmeid', 'levelid', 'status', 'error'
                 ]
                 writer = DictWriter(csv_file, fieldnames=fieldnames)
                 writer.writeheader()
@@ -255,7 +253,7 @@ class CsvRowValidator(object):
             error (str): Contains error related to provided row
         """
         OPTIONAL_FIELDS = [
-            'mobile', 'othername', 'status', 'error', 'password'
+            'mobile', 'othername', 'status', 'error'
         ]
         required_values = [value.strip() if value else value for (key, value) in row.items() if key not in OPTIONAL_FIELDS]
         all_values_available = all(required_values)
