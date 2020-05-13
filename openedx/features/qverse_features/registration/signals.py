@@ -65,6 +65,7 @@ def create_users_from_csv_file(sender, instance, created, **kwargs):
     reader = (dict((k.strip().lower(), v.strip() if v else v) for k, v in row.items()) for row in dict_reader)
     output_file_rows = []
     try:
+        CsvRowValidator.prepare_csv_row_validator()
         for row in reader:
             row['status'] = ''
             row['error'] = ''
@@ -201,6 +202,7 @@ class CsvRowValidator(object):
     """
     Validates single CSV row data.
     """
+    validated_regno = set()
 
     def __init__(self, row):
         self.regno = row['regno']
@@ -213,6 +215,14 @@ class CsvRowValidator(object):
         self.programme_id = row['programmeid']
         self.current_level = row['levelid']
         self.errors = []
+
+    @staticmethod
+    def prepare_csv_row_validator():
+        """
+        Cleans all the static variables of the class to get ready for the validation
+        of new file.
+        """
+        CsvRowValidator.validated_regno.clear()
 
     @staticmethod
     def validate_csv_row(row):
@@ -266,6 +276,7 @@ class CsvRowValidator(object):
         Validates the values of all the given fields of single CSV row.
         """
         self._validate_registration_number()
+        self._validate_unique_regno_in_single_csv_file()
         self._validate_email_address()
         self._validate_unique_email_constraint()
         self._validate_first_name()
@@ -275,6 +286,17 @@ class CsvRowValidator(object):
         self._validate_department_number()
         self._validate_programme_id()
         self._validate_mobile_number()
+
+    def _validate_unique_regno_in_single_csv_file(self):
+        """
+        Validates that there should be only one occurrence of one particular
+        registration number with valid related data in the uploaded CSV file.
+        """
+        is_user_exist = User.objects.filter(username=self.regno).exists()
+        if is_user_exist and self.regno in CsvRowValidator.validated_regno:
+            self.errors.append('An entry with registration number {} already exists in this file.'.format(self.regno))
+        else:
+            CsvRowValidator.validated_regno.add(self.regno)
 
     def _validate_email_address(self):
         try:
