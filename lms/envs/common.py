@@ -2593,6 +2593,9 @@ REGISTRATION_EMAIL_PATTERNS_ALLOWED = None
 CERT_NAME_SHORT = "Certificate"
 CERT_NAME_LONG = "Certificate of Achievement"
 
+############## Settings for QVerse registration app ##############
+OTP_LINK_TIMEOUT = 60 # # Shows number of days and it's minimum value can be 1 day
+
 #################### OpenBadges Settings #######################
 
 BADGING_BACKEND = 'badges.backends.badgr.BadgrBackend'
