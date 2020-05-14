@@ -2,6 +2,7 @@
 Signals for qverse registration application.
 """
 import logging
+import re
 from csv import DictReader, DictWriter, Error, Sniffer
 
 from django.contrib.auth.models import User
@@ -261,6 +262,19 @@ class CsvRowValidator(object):
         if not all_values_available:
             return 'Please provide values for all required fields.'
 
+    @staticmethod
+    def _has_symbols(value):
+        """
+        Validates that the provided value doesn't contain any symbol.
+
+        Arguments:
+            value (str): A string which is to be validated
+
+        Returns:
+            flag (bool): Shows that provided value is valid or not
+        """
+        return not bool(re.match('^[A-Za-z0-9 ]*$', value))
+
     def _validate_field_values(self):
         """
         Validates the values of all the given fields of single CSV row.
@@ -302,17 +316,29 @@ class CsvRowValidator(object):
         if len(self.regno) > REGISTRATION_NUMBER_MAX_LENGTH:
             self.errors.append('Registration number is more than {} characters long.'.format(REGISTRATION_NUMBER_MAX_LENGTH))
 
+        if not self.regno.isalnum():
+            self.errors.append('Please provide some valid alpha numeric value for registration number.')
+
     def _validate_first_name(self):
         if len(self.first_name) > FIRST_NAME_MAX_LENGTH:
             self.errors.append('First name is more than {} characters long.'.format(FIRST_NAME_MAX_LENGTH))
+
+        if CsvRowValidator._has_symbols(self.first_name):
+            self.errors.append('Please don\'t include any symbol in the first name.')
 
     def _validate_surname(self):
         if len(self.surname) > SURNAME_MAX_LENGTH:
             self.errors.append('Surname is more than {} characters long.'.format(SURNAME_MAX_LENGTH))
 
+        if CsvRowValidator._has_symbols(self.surname):
+            self.errors.append('Please don\'t include any symbol in the surname.')
+
     def _validate_other_name(self):
         if len(self.other_name) > OTHER_NAME_MAX_LENGTH:
             self.errors.append('Other name is more than {} characters long.'.format(OTHER_NAME_MAX_LENGTH))
+
+        if CsvRowValidator._has_symbols(self.other_name):
+            self.errors.append('Please don\'t include any symbol in the other name.')
 
     def _validate_mobile_number(self):
         if len(self.mobile_number) > MOBILE_NUMBER_MAX_LENGTH:
