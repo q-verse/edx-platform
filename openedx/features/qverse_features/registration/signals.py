@@ -266,7 +266,10 @@ class CsvRowValidator(object):
         OPTIONAL_FIELDS = [
             'mobile', 'othername', 'status', 'error'
         ]
-        required_values = [value.strip() if value else value for (key, value) in row.items() if key not in OPTIONAL_FIELDS]
+        required_values = [value.strip()
+                           if value else value
+                           for (key, value) in row.items()
+                           if key not in OPTIONAL_FIELDS]
         all_values_available = all(required_values)
 
         if not all_values_available:
@@ -336,7 +339,8 @@ class CsvRowValidator(object):
 
     def _validate_registration_number(self):
         if len(self.regno) > REGISTRATION_NUMBER_MAX_LENGTH:
-            self.errors.append('Registration number is more than {} characters long.'.format(REGISTRATION_NUMBER_MAX_LENGTH))
+            self.errors.append(('Registration number is more '
+                                'than {} characters long.').format(REGISTRATION_NUMBER_MAX_LENGTH))
 
         if not self.regno.isalnum():
             self.errors.append('Please provide some valid alpha numeric value for registration number.')
@@ -370,7 +374,8 @@ class CsvRowValidator(object):
         try:
             programme_id = int(self.programme_id)
             if programme_id < 1 or programme_id > MAX_PROGRAMME_CHOICES:
-                self.errors.append('Programme ID must be greater than 0 and smaller than {}.'.format(MAX_PROGRAMME_CHOICES+1))
+                self.errors.append(('Programme ID must be greater '
+                                    'than 0 and smaller than {}.').format(MAX_PROGRAMME_CHOICES+1))
         except ValueError:
             self.errors.append('Programme ID is not an integer value.')
 

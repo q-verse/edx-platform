@@ -37,6 +37,7 @@ REGISTRATION_NUMBER_MAX_LENGTH = 30
 OTHER_NAME_MAX_LENGTH = 50
 MOBILE_NUMBER_MAX_LENGTH = 20
 
+
 class BulkUserRegistration(models.Model):
     """
     Saves csv records for bulk user registration.

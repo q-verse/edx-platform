@@ -65,6 +65,7 @@ from openedx.core.djangoapps.user_api.preferences import api as preferences_api
 
 from openedx.core.djangolib.markup import HTML, Text
 from openedx.features.journals.api import get_journals_context
+from openedx.features.qverse_features.registration.context_manager import one_time_password_link_expiry
 from student.forms import AccountCreationForm, PasswordResetFormNoActive, get_registration_extension_form
 from student.helpers import (
     DISABLE_UNENROLL_CERT_STATES,
@@ -908,10 +909,14 @@ def password_reset_confirm_wrapper(request, uidb36=None, token=None):
 
         # remember what the old password hash is before we call down
         old_password_hash = user.password
-
-        response = password_reset_confirm(
-            request, uidb64=uidb64, token=token, extra_context=platform_name
-        )
+        # [QVERSE_CUSTOM]
+        # Added a custom context manager to have different expiry limit
+        # for reset password link and one time password link
+        with one_time_password_link_expiry(last_login=user.last_login,
+                                           default_timeout=settings.PASSWORD_RESET_TIMEOUT_DAYS):
+            response = password_reset_confirm(
+                request, uidb64=uidb64, token=token, extra_context=platform_name
+            )
 
         # If password reset was unsuccessful a template response is returned (status_code 200).
         # Check if form is invalid then show an error to the user.
@@ -931,9 +936,14 @@ def password_reset_confirm_wrapper(request, uidb36=None, token=None):
         updated_user = User.objects.get(id=uid_int)
 
     else:
-        response = password_reset_confirm(
-            request, uidb64=uidb64, token=token, extra_context=platform_name
-        )
+        # [QVERSE_CUSTOM]
+        # Added a custom context manager to have different expiry limit
+        # for reset password link and one time password link
+        with one_time_password_link_expiry(last_login=user.last_login,
+                                           default_timeout=settings.PASSWORD_RESET_TIMEOUT_DAYS):
+            response = password_reset_confirm(
+                request, uidb64=uidb64, token=token, extra_context=platform_name
+            )
 
         response_was_successful = response.context_data.get('validlink')
         if response_was_successful and not user.is_active:

@@ -1069,6 +1069,9 @@ PARENTAL_CONSENT_AGE_LIMIT = ENV_TOKENS.get(
 # Do NOT calculate this dynamically at startup with git because it's *slow*.
 EDX_PLATFORM_REVISION = ENV_TOKENS.get('EDX_PLATFORM_REVISION', EDX_PLATFORM_REVISION)
 
+############## Settings for QVerse registration app ##################
+OTP_LINK_TIMEOUT = ENV_TOKENS.get('OTP_LINK_TIMEOUT', OTP_LINK_TIMEOUT)
+
 ########################## Extra middleware classes  #######################
 
 # Allow extra middleware classes to be added to the app through configuration.
