@@ -577,6 +577,10 @@ COMPLETION_VIDEO_COMPLETE_PERCENTAGE = ENV_TOKENS.get(
     COMPLETION_VIDEO_COMPLETE_PERCENTAGE,
 )
 
+
+############## Settings for QVerse registration app ##############
+OTP_LINK_TIMEOUT = ENV_TOKENS.get('OTP_LINK_TIMEOUT', OTP_LINK_TIMEOUT)
+
 ####################### Enterprise Settings ######################
 # A shared secret to be used for encrypting passwords passed from the enterprise api
 # to the enteprise reporting script.
