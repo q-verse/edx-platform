@@ -1,0 +1,17 @@
+{% load i18n %}{% autoescape off %}{% blocktrans %}Dear {{ firstname }},{% endblocktrans %}
+
+
+{% blocktrans %}You have been successfully registered on {{ site_name }} with the following credentials:{% endblocktrans %}
+
+
+
+{% blocktrans %}Registration Number (username): {{ regno }}{% endblocktrans %}
+{% blocktrans %}Email: {{ email }}{% endblocktrans %}
+
+{% blocktrans %}Click on the link below to set your account password:{% endblocktrans %}
+
+{{ reset_password_link }}
+----
+{% blocktrans %}Thanks,{% endblocktrans %}
+{% blocktrans %}{{ platform_name }}{% endblocktrans %}
+{% endautoescape %}

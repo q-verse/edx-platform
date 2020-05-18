@@ -5,13 +5,14 @@ Django models for qverse registration app.
 from __future__ import unicode_literals
 
 from django.contrib.auth.models import User
-from django.core.validators import MinValueValidator, MaxValueValidator, EmailValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.utils.translation import ugettext_noop
 
 from openedx.features.qverse_features.registration.validators import (validate_admission_file,
                                                                       validate_current_level,
                                                                       validate_programme_choices)
+
 
 # explicitly saving lengths of these generators
 # as these would be used in validtors.py for
@@ -37,7 +38,7 @@ OTHER_NAME_MAX_LENGTH = 50
 MOBILE_NUMBER_MAX_LENGTH = 20
 
 
-class AdmissionData(models.Model):
+class BulkUserRegistration(models.Model):
     """
     Saves csv records for bulk user registration.
     """
@@ -51,7 +52,6 @@ class AdmissionData(models.Model):
 
     class Meta(object):
         app_label = APP_LABEL
-        verbose_name_plural = 'Admission data'
 
     def __str__(self):
         return self.description
@@ -92,12 +92,10 @@ class QVerseUserProfile(models.Model):
 
     user = models.OneToOneField(User, unique=True, db_index=True,
                                 related_name='qverse_profile', on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=FIRST_NAME_MAX_LENGTH)
-    surname = models.CharField(max_length=SURNAME_MAX_LENGTH)
     department = models.ForeignKey(Department, db_index=True, null=True, on_delete=models.SET_NULL)
     registration_number = models.CharField(unique=True, max_length=REGISTRATION_NUMBER_MAX_LENGTH, db_index=True)
     other_name = models.CharField(blank=True, max_length=OTHER_NAME_MAX_LENGTH)
-    mobile_number = models.CharField(blank=True, max_length=20)
+    mobile_number = models.CharField(blank=True, max_length=MOBILE_NUMBER_MAX_LENGTH)
     current_level = models.IntegerField(choices=LEVEL_CHOICES,
                                         validators=[validate_current_level, MaxValueValidator(99)])
     programme = models.IntegerField(db_index=True, choices=PROGRAMME_CHOICES, validators=[validate_programme_choices])
@@ -108,43 +106,8 @@ class QVerseUserProfile(models.Model):
 
         This would help us to ensure unique constraint of registration number.
         """
-        # Our prospective user has become regular user
-        # so it's unnecessary to keep its details in two
-        # different tables
-        ProspectiveUser.objects.get(registration_number=self.registration_number).delete()
         self.registration_number = self.registration_number.upper()
-        super(QVerseUserProfile, self).save(*args, **kwargs)
+        return super(QVerseUserProfile, self).save(*args, **kwargs)
 
     def __str__(self):
         return '({}) --- {}'.format(self.registration_number, self.user.profile.name)
-
-
-class ProspectiveUser(models.Model):
-    """
-    Represents qverse prospective user.
-    """
-
-    class Meta(object):
-        app_label = APP_LABEL
-
-    email = models.EmailField(unique=True, validators=[EmailValidator])
-    first_name = models.CharField(max_length=FIRST_NAME_MAX_LENGTH)
-    surname = models.CharField(max_length=SURNAME_MAX_LENGTH)
-    department = models.ForeignKey(Department, db_index=True, null=True, on_delete=models.SET_NULL)
-    registration_number = models.CharField(unique=True, max_length=REGISTRATION_NUMBER_MAX_LENGTH, db_index=True)
-    other_name = models.CharField(blank=True, max_length=OTHER_NAME_MAX_LENGTH)
-    mobile_number = models.CharField(blank=True, max_length=20)
-    current_level = models.IntegerField(choices=LEVEL_CHOICES,
-                                        validators=[validate_current_level, MaxValueValidator(99)])
-    programme = models.IntegerField(db_index=True, choices=PROGRAMME_CHOICES, validators=[validate_programme_choices])
-
-    def __str__(self):
-        return '({}) --- {} {}'.format(self.registration_number, self.first_name, self.surname)
-
-    def save(self, *args, **kwargs):
-        """
-        Make sure that no invalid email is saved in model.
-        """
-        validate_email = EmailValidator()
-        validate_email(self.email)
-        super(ProspectiveUser, self).save(*args, **kwargs)
