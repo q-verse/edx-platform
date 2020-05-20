@@ -5,6 +5,7 @@ import logging
 import uuid
 
 import pycountry
+from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from edx_rest_api_client.client import EdxRestApiClient
@@ -230,15 +231,21 @@ def get_currency_data():
         return []
 
 
-def format_price(price, symbol='$', code='USD'):
+def format_price(price, symbol, code):
     """
     Format the price to have the appropriate currency and digits..
 
     :param price: The price amount.
-    :param symbol: The symbol for the price (default: $)
-    :param code: The currency code to be appended to the price (default: USD)
+    :param symbol: The symbol for the price (default: configured currency symbol)
+    :param code: The currency code to be appended to the price (default: configured currency)
     :return: A formatted price string, i.e. '$10 USD', '$10.52 USD'.
     """
+    if not code:
+        code = settings.PAID_COURSE_REGISTRATION_CURRENCY[0]
+
+    if not symbol:
+        symbol = settings.PAID_COURSE_REGISTRATION_CURRENCY[1]
+
     if int(price) == price:
         return '{}{} {}'.format(symbol, int(price), code)
     return '{}{:0.2f} {}'.format(symbol, price, code)
@@ -249,12 +256,12 @@ def get_localized_price_text(price, request):
     Returns the localized converted price as string (ex. '$150 USD')
 
     If the users location has been added to the request, this will return the given price based on conversion rate
-    from the Catalog service and return a localized string otherwise will return the default price in USD
+    from the Catalog service and return a localized string otherwise will return the default price in configured currency
     """
     user_currency = {
-        'symbol': '$',
+        'symbol': settings.PAID_COURSE_REGISTRATION_CURRENCY[0],
         'rate': 1,
-        'code': 'USD'
+        'code': settings.PAID_COURSE_REGISTRATION_CURRENCY[1]
     }
 
     # session.country_code is added via CountryMiddleware in the LMS

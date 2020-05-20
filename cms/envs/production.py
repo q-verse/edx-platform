@@ -624,3 +624,10 @@ plugin_settings.add_plugins(__name__, plugin_constants.ProjectType.CMS, plugin_c
 ########################## Derive Any Derived Settings  #######################
 
 derive_settings(__name__)
+
+
+############## Qverse Features #########################
+
+# edX does not set the following variable in cms. But we have to set these, otherwise it gives an error.
+PAID_COURSE_REGISTRATION_CURRENCY = ENV_TOKENS.get('PAID_COURSE_REGISTRATION_CURRENCY',
+                                                   PAID_COURSE_REGISTRATION_CURRENCY)

@@ -30,7 +30,10 @@ from openedx.features.portfolio_project import INCLUDE_PORTFOLIO_UPSELL_MODAL
         ${static.renderReact(
           component="UpsellExperimentModal",
           id="upsell-modal",
-          props={},
+          props={
+              "currency": settings.PAID_COURSE_REGISTRATION_CURRENCY[0],
+              "currency_symbol": settings.PAID_COURSE_REGISTRATION_CURRENCY[1]
+          },
         )}
     % endif
 
@@ -38,7 +41,9 @@ from openedx.features.portfolio_project import INCLUDE_PORTFOLIO_UPSELL_MODAL
         ${static.renderReact(
             component="PortfolioExperimentUpsellModal",
             id="portfolio-experiment-upsell-modal",
-            props={}
+            props={
+                "currency": settings.PAID_COURSE_REGISTRATION_CURRENCY[0],
+                "currency_symbol": settings.PAID_COURSE_REGISTRATION_CURRENCY[1] }
         )}
     % endif
 
