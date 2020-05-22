@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 """
 Views for the course_mode module
 """
@@ -8,6 +9,7 @@ import urllib
 
 import waffle
 from babel.dates import format_datetime
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.http import HttpResponse, HttpResponseBadRequest
@@ -219,6 +221,7 @@ class ChooseModeView(View):
                 if x.strip()
             ]
             context["currency"] = verified_mode.currency.upper()
+            context["currency_symbol"] = settings.PAID_COURSE_REGISTRATION_CURRENCY[1]
             context["min_price"] = verified_mode.min_price
             context["verified_name"] = verified_mode.name
             context["verified_description"] = verified_mode.description
@@ -355,7 +358,7 @@ def create_mode(request, course_id):
         `sku` (str): The product SKU value.
 
     By default, this endpoint will create an 'honor' mode for the given course with display name
-    'Honor Code', a minimum price of 0, no suggested prices, and using USD as the currency.
+    'Honor Code', a minimum price of 0, no suggested prices, and using configured default currency as the currency.
 
     Args:
         request (`Request`): The Django Request object.
@@ -369,7 +372,7 @@ def create_mode(request, course_id):
         'mode_display_name': u'Honor Code Certificate',
         'min_price': 0,
         'suggested_prices': u'',
-        'currency': u'usd',
+        'currency': unicode(settings.PAID_COURSE_REGISTRATION_CURRENCY[0]),
         'sku': None,
     }
 
