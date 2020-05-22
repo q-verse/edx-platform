@@ -866,6 +866,8 @@ def course_about(request, course_id):
         reviews_fragment_view = CourseReviewsModuleFragmentView().render_to_fragment(request, course=course)
 
         context = {
+            'currency': settings.PAID_COURSE_REGISTRATION_CURRENCY[0],
+            'currency_symbol': settings.PAID_COURSE_REGISTRATION_CURRENCY[1],
             'course': course,
             'course_details': course_details,
             'staff_access': staff_access,
@@ -917,7 +919,11 @@ def program_marketing(request, program_uuid):
     skus = program.get('skus')
     ecommerce_service = EcommerceService()
 
-    context = {'program': program}
+    context = {
+        'program': program,
+        'currency': settings.PAID_COURSE_REGISTRATION_CURRENCY[0],
+        'currency_symbol': settings.PAID_COURSE_REGISTRATION_CURRENCY[1],
+    }
 
     if program.get('is_learner_eligible_for_one_click_purchase') and skus:
         context['buy_button_href'] = ecommerce_service.get_checkout_page_url(*skus, program_uuid=program_uuid)

@@ -9,6 +9,7 @@ import logging
 
 import crum
 from django.apps import apps
+from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from web_fragments.fragment import Fragment
@@ -83,7 +84,9 @@ class ContentTypeGatingPartition(UserPartition):
         frag = Fragment(render_to_string('content_type_gating/access_denied_message.html', {
             'mobile_app': is_request_from_mobile_app(request),
             'ecommerce_checkout_link': ecommerce_checkout_link,
-            'min_price': str(verified_mode.min_price)
+            'min_price': str(verified_mode.min_price),
+            'currency': settings.PAID_COURSE_REGISTRATION_CURRENCY[0],
+            'currency_symbol': settings.PAID_COURSE_REGISTRATION_CURRENCY[1]
         }))
         return frag
 

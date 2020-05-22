@@ -65,6 +65,7 @@ export class UpsellExperimentModal extends React.Component {
             </div>
         );
         const { buttonDestinationURL } = this.props;
+        let upgradeText = `Upgrade (${this.props.currency_symbol}100 ${this.props.currency})`;
         return (
             <Modal
                 open={this.state.isOpen}
@@ -74,8 +75,8 @@ export class UpsellExperimentModal extends React.Component {
                 body={body}
                 buttons={[
                     (<Button
-                        label={"Upgrade ($100 USD)"}
-                        display={"Upgrade ($100 USD)"}
+                        label={upgradeText}
+                        display={upgradeText}
                         buttonType="success"
                         // unfortunately, Button components don't have an href component
                         onClick={() => window.location = buttonDestinationURL}

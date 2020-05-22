@@ -20,7 +20,7 @@ class ModeCreationPage(PageObject):
         """The mode creation page is an endpoint for HTTP GET requests.
 
         By default, it will create an 'honor' mode for the given course with display name
-        'Honor Code', a minimum price of 0, no suggested prices, and using USD as the currency.
+        'Honor Code', a minimum price of 0, no suggested prices, and using configured currency as the currency.
 
         Arguments:
             browser (Browser): The browser instance.
