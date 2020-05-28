@@ -65,6 +65,7 @@ var edx = edx || {};
                     function(price) { return Boolean(price); }
                 ),
                 currency: $el.data('course-mode-currency'),
+                currencySymbol: $el.data('currency-symbol'),
                 processors: $el.data('processors'),
                 verificationDeadline: $el.data('verification-deadline'),
                 courseModeSlug: $el.data('course-mode-slug'),
