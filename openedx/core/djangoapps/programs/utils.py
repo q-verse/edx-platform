@@ -692,7 +692,8 @@ class ProgramDataExtender(object):
                 self.data.update({
                     'discount_data': discount_data,
                     'full_program_price': discount_data['total_incl_tax'],
-                    'variant': bundle_variant
+                    'variant': bundle_variant,
+                    'currency_symbol': settings.PAID_COURSE_REGISTRATION_CURRENCY[1]
                 })
             except (ConnectionError, SlumberBaseException, Timeout):
                 log.exception('Failed to get discount price for following product SKUs: %s ', ', '.join(skus))
