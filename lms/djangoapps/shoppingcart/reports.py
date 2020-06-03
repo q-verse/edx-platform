@@ -3,6 +3,7 @@
 from decimal import Decimal
 
 import unicodecsv
+from django.conf import settings
 from django.utils.translation import ugettext as _
 from six import text_type
 
@@ -164,6 +165,7 @@ class CertificateStatusReport(Report):
             total_enrolled = counts['total']
             audit_enrolled = counts['audit']
             honor_enrolled = counts['honor']
+            currency = settings.PAID_COURSE_REGISTRATION_CURRENCY[0]
 
             if counts['verified'] == 0:
                 verified_enrolled = 0
@@ -172,7 +174,7 @@ class CertificateStatusReport(Report):
             else:
                 verified_enrolled = counts['verified']
                 gross_rev = CertificateItem.verified_certificates_monetary_field_sum(course_id, 'purchased', 'unit_cost')
-                gross_rev_over_min = gross_rev - (CourseMode.min_course_price_for_verified_for_currency(course_id, 'usd') * verified_enrolled)
+                gross_rev_over_min = gross_rev - (CourseMode.min_course_price_for_verified_for_currency(course_id, currency) * verified_enrolled)
 
             num_verified_over_the_minimum = CertificateItem.verified_certificates_contributing_more_than_minimum(course_id)
 

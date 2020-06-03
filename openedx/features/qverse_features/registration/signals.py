@@ -1,6 +1,7 @@
 """
 Signals for qverse registration application.
 """
+import io
 import logging
 import re
 from csv import DictReader, DictWriter, Error, Sniffer
@@ -19,6 +20,7 @@ from openedx.features.qverse_features.registration.models import (BulkUserRegist
                                                                   SURNAME_MAX_LENGTH, FIRST_NAME_MAX_LENGTH,
                                                                   MOBILE_NUMBER_MAX_LENGTH, OTHER_NAME_MAX_LENGTH,
                                                                   MAX_LEVEL_CHOICES, MAX_PROGRAMME_CHOICES)
+from openedx.features.qverse_features.registration.helpers import get_file_encoding
 from openedx.features.qverse_features.registration.tasks import send_bulk_mail_to_newly_created_students
 from student.models import UserProfile
 
@@ -51,8 +53,19 @@ def create_users_from_csv_file(sender, instance, created, **kwargs):
     csv_file = None
     dialect = None
     try:
-        csv_file = open(instance.admission_file.path, 'r')
-        dialect = Sniffer().sniff(csv_file.readline())
+        encoding = get_file_encoding(instance.admission_file.path)
+        if not encoding:
+            LOGGER.exception('Because of invlid file encoding format, user creation process is aborted.')
+            return
+
+        csv_file = io.open(instance.admission_file.path, 'r', encoding=encoding)
+        try:
+            dialect = Sniffer().sniff(csv_file.readline())
+        except Error:
+            LOGGER.exception('Could not determine delimiter in the file.')
+            csv_file.close()
+            return
+
         csv_file.seek(0)
     except IOError as error:
         LOGGER.exception('({}) --- {}'.format(error.filename, error.strerror))
@@ -65,6 +78,8 @@ def create_users_from_csv_file(sender, instance, created, **kwargs):
     # whitespaces. So, we will have to handle that case ourselves
     reader = (dict((k.strip().lower(), v.strip() if v else v) for k, v in row.items()) for row in dict_reader)
     output_file_rows = []
+    users_with_updated_emails = set()
+
     try:
         CsvRowValidator.prepare_csv_row_validator()
         for row in reader:
@@ -78,7 +93,7 @@ def create_users_from_csv_file(sender, instance, created, **kwargs):
                     # will be an atomic operation. If one operation fails the previous
                     # successfull operations will be reverted and no changes will be applied.
                     with transaction.atomic():
-                        edx_user = _create_or_update_edx_user(row)
+                        edx_user = _create_or_update_edx_user(row, users_with_updated_emails)
                         _create_or_update_edx_user_profile(edx_user)
                         _create_or_update_qverse_user_profile(edx_user, row)
                 except IntegrityError as error:
@@ -98,22 +113,30 @@ def create_users_from_csv_file(sender, instance, created, **kwargs):
                          .format(instance.admission_file.path, err))
     csv_file.close()
     _write_status_on_csv_file(instance.admission_file.path, output_file_rows)
-    new_students = [student for student in output_file_rows if student.get('status') == USER_CREATED]
+    new_students = [student for student in output_file_rows
+                    if student.get('status') == USER_CREATED or
+                    (student.get('status') == USER_UPDATED and student.get('regno') in users_with_updated_emails)]
     site = get_current_site()
     protocol = 'https' if get_current_request().is_secure() else 'http'
     send_bulk_mail_to_newly_created_students.delay(new_students, site.id, protocol)
 
 
-def _create_or_update_edx_user(user_info):
+def _create_or_update_edx_user(user_info, users_with_updated_emails):
     """
     Creates/Updates edx user from given information.
 
     Arguments:
         user_info (dict): A dict containing user information
+        users_with_updated_emails (set): A set containing registration numbers of students whose emails addresses
+                                         have been updated
 
     Returns:
         edx_user (User): A newly created/updated User object
     """
+    is_new_email_address = False
+    if not User.objects.filter(email=user_info.get('email')).exists():
+        is_new_email_address = True
+
     user_data = {
                     'email': user_info.get('email'),
                     'first_name': user_info.get('firstname'),
@@ -127,6 +150,11 @@ def _create_or_update_edx_user(user_info):
         edx_user.save()
         LOGGER.info('{} user has been created.'.format(edx_user.username))
     else:
+        if is_new_email_address:
+            users_with_updated_emails.add(user_info.get('regno'))
+            # Setting new password will expire all the previous reset password links
+            edx_user.set_password(get_random_string())
+            edx_user.save()
         LOGGER.info('{} user has been updated.'.format(edx_user.username))
     return edx_user
 

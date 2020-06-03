@@ -5,6 +5,7 @@ import logging
 import uuid
 
 import pycountry
+from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from edx_rest_api_client.client import EdxRestApiClient
@@ -22,6 +23,10 @@ from openedx.core.lib.edx_api_utils import get_edx_api_data
 from student.models import CourseEnrollment
 
 logger = logging.getLogger(__name__)
+
+
+CURRENCY_CODE = settings.PAID_COURSE_REGISTRATION_CURRENCY[0]
+CURRENCY_SYMBOL = settings.PAID_COURSE_REGISTRATION_CURRENCY[1]
 
 
 def create_catalog_api_client(user, site=None):
@@ -230,13 +235,13 @@ def get_currency_data():
         return []
 
 
-def format_price(price, symbol='$', code='USD'):
+def format_price(price, symbol=CURRENCY_SYMBOL, code=CURRENCY_CODE):
     """
     Format the price to have the appropriate currency and digits..
 
     :param price: The price amount.
-    :param symbol: The symbol for the price (default: $)
-    :param code: The currency code to be appended to the price (default: USD)
+    :param symbol: The symbol for the price (default: configured currency symbol)
+    :param code: The currency code to be appended to the price (default: configured currency)
     :return: A formatted price string, i.e. '$10 USD', '$10.52 USD'.
     """
     if int(price) == price:
@@ -249,12 +254,12 @@ def get_localized_price_text(price, request):
     Returns the localized converted price as string (ex. '$150 USD')
 
     If the users location has been added to the request, this will return the given price based on conversion rate
-    from the Catalog service and return a localized string otherwise will return the default price in USD
+    from the Catalog service and return a localized string otherwise will return the default price in configured currency
     """
     user_currency = {
-        'symbol': '$',
+        'symbol': CURRENCY_SYMBOL,
         'rate': 1,
-        'code': 'USD'
+        'code': CURRENCY_CODE
     }
 
     # session.country_code is added via CountryMiddleware in the LMS

@@ -411,6 +411,7 @@ class PayAndVerifyView(View):
 
         # Render the top-level page
         context = {
+            'currency_symbol': settings.PAID_COURSE_REGISTRATION_CURRENCY[1],
             'contribution_amount': contribution_amount,
             'course': course,
             'course_key': unicode(course_key),
