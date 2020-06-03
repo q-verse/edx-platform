@@ -1,6 +1,7 @@
 """
 Signals for qverse registration application.
 """
+import io
 import logging
 import re
 from csv import DictReader, DictWriter, Error, Sniffer
@@ -19,6 +20,7 @@ from openedx.features.qverse_features.registration.models import (BulkUserRegist
                                                                   SURNAME_MAX_LENGTH, FIRST_NAME_MAX_LENGTH,
                                                                   MOBILE_NUMBER_MAX_LENGTH, OTHER_NAME_MAX_LENGTH,
                                                                   MAX_LEVEL_CHOICES, MAX_PROGRAMME_CHOICES)
+from openedx.features.qverse_features.registration.helpers import get_file_encoding
 from openedx.features.qverse_features.registration.tasks import send_bulk_mail_to_newly_created_students
 from student.models import UserProfile
 
@@ -51,8 +53,15 @@ def create_users_from_csv_file(sender, instance, created, **kwargs):
     csv_file = None
     dialect = None
     try:
-        csv_file = open(instance.admission_file.path, 'r')
-        dialect = Sniffer().sniff(csv_file.readline())
+        encoding = get_file_encoding(instance.admission_file.path)
+        csv_file = io.open(instance.admission_file.path, 'r', encoding=encoding)
+        try:
+            dialect = Sniffer().sniff(csv_file.readline())
+        except Error:
+            LOGGER.exception('Could not determine delimiter in the file.')
+            csv_file.close()
+            return
+
         csv_file.seek(0)
     except IOError as error:
         LOGGER.exception('({}) --- {}'.format(error.filename, error.strerror))
@@ -66,6 +75,7 @@ def create_users_from_csv_file(sender, instance, created, **kwargs):
     reader = (dict((k.strip().lower(), v.strip() if v else v) for k, v in row.items()) for row in dict_reader)
     output_file_rows = []
     users_with_updated_emails = set()
+
     try:
         CsvRowValidator.prepare_csv_row_validator()
         for row in reader:

@@ -1,10 +1,11 @@
 """
 Validation utils for qverse registration application.
 """
-from csv import reader, Sniffer
-import io
+from csv import Error
 
 from django.core.exceptions import ValidationError
+
+from openedx.features.qverse_features.registration.helpers import get_file_header_row
 
 
 def validate_admission_file(file):
@@ -22,18 +23,19 @@ def validate_admission_file(file):
                 'regno', 'firstname', 'surname', 'othername', 'levelid',
                 'programmeid', 'departmentid', 'mobile', 'email'
                 ]
-    decoded_file = file.read().decode('utf-8')
-    io_string = io.StringIO(decoded_file)
     header_row = []
     try:
-        dialect = Sniffer().sniff(io_string.readline())
-        io_string.seek(0)
-        header_row = reader(io_string, delimiter=dialect.delimiter).next()
-        header_row = [heading.lower().strip() for heading in header_row]
-    except StopIteration:
+        file_content = file.read()
+
+        try:
+            header_row = get_file_header_row(file_content, 'utf-8')
+        except Error:
+            header_row = get_file_header_row(file_content, 'utf-16')
+
+    except Exception:
         raise ValidationError('', code='invalid')
 
-    if not all(field_name in header_row for field_name in FIELD_NAMES):
+    if not all([field_name in header_row for field_name in FIELD_NAMES]):
         raise ValidationError('', code='invalid')
 
     if 'error' in header_row:
