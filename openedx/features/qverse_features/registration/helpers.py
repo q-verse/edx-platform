@@ -42,10 +42,16 @@ def get_file_encoding(file_path):
         file = io.open(file_path, 'r', encoding='utf-8')
         encoding = None
         try:
-            encoding = 'utf-8'
             _ = file.read()
+            encoding = 'utf-8'
         except UnicodeDecodeError:
-            encoding = 'utf-16'
+            file.close()
+            file = io.open(file_path, 'r', encoding='utf-16')
+            try:
+                _ = file.read()
+                encoding = 'utf-16'
+            except UnicodeDecodeError:
+                LOGGER.exception('The file encoding format must be utf-8 or utf-16.')
 
         file.close()
         return encoding

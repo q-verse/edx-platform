@@ -54,6 +54,10 @@ def create_users_from_csv_file(sender, instance, created, **kwargs):
     dialect = None
     try:
         encoding = get_file_encoding(instance.admission_file.path)
+        if not encoding:
+            LOGGER.exception('Because of invlid file encoding format, user creation process is aborted.')
+            return
+
         csv_file = io.open(instance.admission_file.path, 'r', encoding=encoding)
         try:
             dialect = Sniffer().sniff(csv_file.readline())
