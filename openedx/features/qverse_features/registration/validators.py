@@ -23,8 +23,10 @@ def validate_admission_file(file):
                 'regno', 'firstname', 'surname', 'othername', 'levelid',
                 'programmeid', 'departmentid', 'mobile', 'email'
                 ]
+    header_row = []
     try:
         file_content = file.read()
+        
         try:
             header_row = get_file_header_row(file_content, 'utf-8')
         except Error:
