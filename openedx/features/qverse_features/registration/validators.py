@@ -17,26 +17,25 @@ def validate_admission_file(file):
         file (models.FileField): The file uploaded by the user
     """
     if not file.name.endswith('.csv'):
-        raise ValidationError('', code='invalid')
+        raise ValidationError('Invalid file format. Only csv files are supported.')
 
     FIELD_NAMES = [
                 'regno', 'firstname', 'surname', 'othername', 'levelid',
                 'programmeid', 'departmentid', 'mobile', 'email'
                 ]
-    header_row = []
     try:
+        import pdb; pdb.set_trace();
         file_content = file.read()
-
         try:
             header_row = get_file_header_row(file_content, 'utf-8')
         except Error:
             header_row = get_file_header_row(file_content, 'utf-16')
 
     except Exception:
-        raise ValidationError('', code='invalid')
+        raise ValidationError('Invalid file format. Only utf-8 and utf-16 supported.')
 
     if not all([field_name in header_row for field_name in FIELD_NAMES]):
-        raise ValidationError('', code='invalid')
+        raise ValidationError('Invalid Content. Required columns missing.')
 
     if 'error' in header_row:
         header_row.remove('error')
@@ -45,7 +44,7 @@ def validate_admission_file(file):
         header_row.remove('status')
 
     if len(header_row) != len(FIELD_NAMES):
-        raise ValidationError('', code='invalid')
+        raise ValidationError('Invalid Content. Remove extra columns.')
 
 
 def validate_current_level(value):
