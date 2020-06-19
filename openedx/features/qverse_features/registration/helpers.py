@@ -23,8 +23,7 @@ def get_file_rows(file_content, encoding):
     io_string = io.StringIO(decoded_file)
     dialect = Sniffer().sniff(io_string.readline())
     io_string.seek(0)
-    dict_reader = reader(io_string, delimiter=dialect.delimiter)
-    return [row for row in dict_reader]
+    return list(reader(io_string, delimiter=dialect.delimiter))
 
 
 def get_file_encoding(file_path):
