@@ -5,7 +5,7 @@ from csv import Error
 
 from django.core.exceptions import ValidationError
 
-from openedx.features.qverse_features.registration.helpers import get_file_header_row
+from openedx.features.qverse_features.registration.helpers import get_file_rows
 
 
 def validate_admission_file(file):
@@ -23,20 +23,27 @@ def validate_admission_file(file):
                 'regno', 'firstname', 'surname', 'othername', 'levelid',
                 'programmeid', 'departmentid', 'mobile', 'email'
                 ]
-    header_row = []
+
     try:
         file_content = file.read()
         
         try:
-            header_row = get_file_header_row(file_content, 'utf-8')
+            file_rows = get_file_rows(file_content, 'utf-8')
         except Error:
-            header_row = get_file_header_row(file_content, 'utf-16')
-
+            file_rows = get_file_rows(file_content, 'utf-16')
+    except TypeError:
+        raise ValidationError('Invalid file content. Csv should only use "," as delimiter')
     except Exception:
         raise ValidationError('Invalid file encoding format. Only utf-8 and utf-16 file encoding formats are supported.')
 
+    header_row = file_rows[0]
+
     if not all([field_name in header_row for field_name in FIELD_NAMES]):
         raise ValidationError('Invalid content. Required columns are missing.')
+
+    for row in file_rows[1:]:
+        if len(row) > len(header_row):
+            raise ValidationError('Invalid content. Values found with no column name.')
 
     if 'error' in header_row:
         header_row.remove('error')
