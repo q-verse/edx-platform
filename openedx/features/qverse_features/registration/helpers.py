@@ -8,7 +8,7 @@ import logging
 LOGGER = logging.getLogger(__name__)
 
 
-def get_file_header_row(file_content, encoding):
+def get_file_rows(file_content, encoding):
     """
     Returns fields of header row of the file.
 
@@ -23,8 +23,7 @@ def get_file_header_row(file_content, encoding):
     io_string = io.StringIO(decoded_file)
     dialect = Sniffer().sniff(io_string.readline())
     io_string.seek(0)
-    header_row = reader(io_string, delimiter=dialect.delimiter).next()
-    return [heading.lower().strip() for heading in header_row]
+    return list(reader(io_string, delimiter=dialect.delimiter))
 
 
 def get_file_encoding(file_path):
